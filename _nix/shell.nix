@@ -9,6 +9,8 @@
       rust_pkg
       pkgs.bun
       pkgs.pkg-config
+	  pkgs.lld
+	  pkgs.clang
     ];
     buildInputs = [];
     shellHook = "zsh";
