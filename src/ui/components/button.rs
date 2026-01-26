@@ -24,6 +24,7 @@ impl ButtonVariant {
 pub(crate) fn Button(
     #[prop(default = ButtonVariant::Primary)] variant: ButtonVariant,
     #[prop(optional)] class: Option<String>,
+    #[prop(optional)] on_click: Option<String>,
     children: Children,
 ) -> impl IntoView {
     let default_style = format!(
@@ -37,6 +38,7 @@ pub(crate) fn Button(
 
     view! {
       <button
+        onclick=on_click
         class=button_style
         >{children()}</button>
     }

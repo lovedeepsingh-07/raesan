@@ -13,13 +13,13 @@ pub(crate) enum Error {
 impl std::string::ToString for Error {
     fn to_string(&self) -> String {
         match self {
-            Error::IOError(err_str) => format!("IOError {}", err_str),
-            Error::FSError(err_str) => format!("FSError {}", err_str),
-            Error::ParseError(err_str) => format!("ParseError {}", err_str),
-            Error::ProtocolError(err_str) => format!("ProtocolError {}", err_str),
-            Error::NotFoundError(err_str) => format!("NotFoundError {}", err_str),
-            Error::ChannelSendError(err_str) => format!("ChannelSendError {}", err_str),
-            Error::ChannelReceiveError(err_str) => format!("ChannelReceiveError {}", err_str),
+            Error::IOError(err_str) => format!("IOError: {}", err_str),
+            Error::FSError(err_str) => format!("FSError: {}", err_str),
+            Error::ParseError(err_str) => format!("ParseError: {}", err_str),
+            Error::ProtocolError(err_str) => format!("ProtocolError: {}", err_str),
+            Error::NotFoundError(err_str) => format!("NotFoundError: {}", err_str),
+            Error::ChannelSendError(err_str) => format!("ChannelSendError: {}", err_str),
+            Error::ChannelReceiveError(err_str) => format!("ChannelReceiveError: {}", err_str),
         }
     }
 }
