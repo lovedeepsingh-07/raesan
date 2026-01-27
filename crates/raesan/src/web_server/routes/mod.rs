@@ -5,8 +5,8 @@ mod static_files;
 pub(crate) use api::route as api;
 pub(crate) use static_files::route as static_files;
 
-use crate::ui::pages;
 use axum::response::IntoResponse;
+use frontend::pages;
 use leptos::prelude::RenderHtml;
 
 pub(crate) async fn home() -> impl IntoResponse {

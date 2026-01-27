@@ -1,0 +1,19 @@
+[package]
+name = "raesan"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8.8", features = ["macros"] }
+clap = { version = "4.5.54", features = ["derive"] }
+env_logger = { workspace = true }
+error = { path = "../error" }
+frontend = { path = "../frontend" }
+leptos = { version = "0.8.15", default-features = false, features = ["ssr"] }
+log = { workspace = true }
+mime_guess = "2.0.5"
+ron = { workspace = true }
+rust-embed = "8.11.0"
+serde = { workspace = true }
+tokio = { workspace = true }
+web_scraper = { path = "../web_scraper" }

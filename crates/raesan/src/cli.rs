@@ -1,5 +1,3 @@
-use crate::error;
-
 #[derive(Debug, clap::Parser)]
 pub(crate) struct CliArgs {
     pub(crate) data_folder_path: Option<String>,

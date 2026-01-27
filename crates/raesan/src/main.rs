@@ -2,24 +2,28 @@ mod cli;
 mod command;
 mod constants;
 mod daemon;
-mod error;
-mod ui;
 mod web_server;
 
 use clap::Parser;
-use tokio::{sync::{mpsc, watch}, task::JoinSet};
+use tokio::{
+    sync::{mpsc, watch},
+    task::JoinSet,
+};
 
 #[derive(Debug)]
 enum TaskResult {
     Completed,
     Shutdown,
-    Failed(error::Error)
+    Failed(error::Error),
 }
 
 #[tokio::main]
 async fn main() {
-    let logger_env = env_logger::Env::default().filter_or("RUST_LOG", "raesan=debug");
-    env_logger::init_from_env(logger_env);
+    env_logger::Builder::new()
+        .filter_module("raesan", log::LevelFilter::Debug)
+        .filter_module("web_scraper", log::LevelFilter::Debug)
+        .filter_level(log::LevelFilter::Off)
+        .init();
 
     let cli_args = cli::CliArgs::parse();
     let data_folder_path = match cli::get_data_folder_path(cli_args) {
@@ -40,7 +44,7 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
 
     let mut daemon_shutdown_rx = shutdown_rx.clone();
     tasks.spawn(async move {
-        tokio::select!{
+        tokio::select! {
             res = daemon::run(command_rx, data_folder_path) => {
                 match res {
                     Ok(_) => TaskResult::Completed,
@@ -52,7 +56,7 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
     });
     let mut web_server_shutdown_rx = shutdown_rx.clone();
     tasks.spawn(async move {
-        tokio::select!{
+        tokio::select! {
             res = web_server::run(command_tx) => {
                 match res {
                     Ok(_) => TaskResult::Completed,
@@ -63,7 +67,7 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
         }
     });
 
-    tokio::select!{
+    tokio::select! {
         join_res = tasks.join_next() => {
             if let Some(join_res) = join_res {
                 let _ = shutdown_tx.send(true);

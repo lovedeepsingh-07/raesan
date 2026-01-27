@@ -1,14 +1,14 @@
 use leptos::prelude::*;
 
 #[allow(dead_code)]
-pub(crate) enum ButtonVariant {
+pub enum ButtonVariant {
     Primary,
     Secondary,
     Accent,
 }
 
 impl ButtonVariant {
-    pub(crate) fn get_style(&self) -> String {
+    pub fn get_style(&self) -> String {
         match self {
             ButtonVariant::Primary => "bg-primary text-primary-foreground hover:bg-primary/90",
             ButtonVariant::Secondary => {
@@ -21,7 +21,7 @@ impl ButtonVariant {
 }
 
 #[component]
-pub(crate) fn Button(
+pub fn Button(
     #[prop(default = ButtonVariant::Primary)] variant: ButtonVariant,
     #[prop(optional)] class: Option<String>,
     #[prop(optional)] on_click: Option<String>,

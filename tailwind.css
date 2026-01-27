@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "./crates/**/*.{html,js,ts,jsx,tsx,rs}";
+@source "./scripts/**/*.{html,js,ts,jsx,tsx,rs}";
 
 :root {
   --background: #000000;

@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 
 #[component]
-pub(crate) fn RootHTML(children: Children) -> impl IntoView {
+pub fn RootHTML(children: Children) -> impl IntoView {
     view! {
         <html>
             <head>

@@ -1,6 +1,6 @@
 pub(crate) mod routes;
 
-use crate::{command, constants, error};
+use crate::{command, constants};
 use tokio::sync::mpsc;
 
 #[derive(Debug, Clone)]
