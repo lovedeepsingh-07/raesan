@@ -46,3 +46,8 @@ impl From<scraper::error::SelectorErrorKind<'_>> for Error {
         Error::ParseError(value.to_string())
     }
 }
+impl From<serde_json::Error> for Error {
+    fn from(value: serde_json::Error) -> Self {
+        Error::ParseError(value.to_string())
+    }
+}

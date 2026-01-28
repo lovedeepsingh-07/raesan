@@ -11,6 +11,7 @@
       pkgs.pkg-config
 	  pkgs.lld
 	  pkgs.clang
+	  pkgs.jq
     ];
     buildInputs = [];
     shellHook = "zsh";

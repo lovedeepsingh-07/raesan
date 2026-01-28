@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+boa_engine = { workspace = true }
 env_logger = { workspace = true }
 error = { path = "../error" }
 log = { workspace = true }
