@@ -1,3 +1,5 @@
+#![allow(non_camel_case_types)]
+
 use std::collections::HashMap;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
@@ -5,14 +7,14 @@ pub struct Exam {
     pub key: String,
     pub title: String,
     pub group: String,
-    pub subjects: HashMap<String, Subject>
+    pub subjects: HashMap<String, Subject>,
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Subject {
     pub key: String,
     pub title: String,
-    pub chapters: HashMap<String, Chapter>
+    pub chapters: HashMap<String, Chapter>,
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
@@ -22,4 +24,16 @@ pub struct Chapter {
     pub subject_key: String,
     pub title: String,
     pub group: String,
+    pub questions: Vec<Question>,
+}
+
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+pub struct Question {
+    pub exam_key: String,
+    pub subject_key: String,
+    pub chapter_key: String,
+    pub chapter_group: String,
+    pub content: String,
+    pub options: HashMap<String, String>,
+    pub answer: String,
 }

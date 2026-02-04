@@ -1,3 +1,4 @@
+mod chapter_page;
 mod error;
 mod exam_page;
 mod page_metadata;
@@ -10,6 +11,14 @@ pub const JEE_ADVANCED_URL: &'static str =
 
 pub async fn run() -> Result<(), error::Error> {
     let exam_page_metadata = page_metadata::extract(JEE_MAIN_URL).await?;
-    exam_page::extract(exam_page_metadata).await?;
+    let mut exam_schema = exam_page::extract(exam_page_metadata).await?;
+
+    let subject_obj = exam_schema.subjects.get("physics").unwrap();
+    let chapter_obj = subject_obj.chapters.get("units-and-measurements").unwrap();
+    let chapter_page_metadata = page_metadata::extract(
+        format!("{}/{}/{}", JEE_MAIN_URL, subject_obj.key, chapter_obj.key).as_str(),
+    )
+    .await?;
+    chapter_page::extract(chapter_page_metadata, &mut exam_schema).await?;
     Ok(())
 }
