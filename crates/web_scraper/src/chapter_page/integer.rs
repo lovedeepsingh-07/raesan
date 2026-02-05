@@ -1,6 +1,9 @@
 use crate::{error, schema};
 
-pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_json::Value) -> Result<(), error::Error> {
+pub fn handle<'a>(
+    output: &'a mut schema::Question,
+    question_body_data: &serde_json::Value,
+) -> Result<(), error::Error> {
     output.question_type = schema::QuestionType::INTEGER;
     output.answer = question_body_data
         .get("answer")
@@ -9,7 +12,7 @@ pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_j
                 "Failed to get the question's 'answer' field".to_string(),
             )
         })?
-    .as_str()
+        .as_str()
         .ok_or_else(|| {
             error::Error::DeserializeError(
                 "Failed to get the question's 'answer' field as a string".to_string(),

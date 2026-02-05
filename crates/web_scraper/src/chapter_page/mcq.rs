@@ -1,24 +1,29 @@
 use crate::{error, schema};
 use std::collections::HashMap;
 
-pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_json::Value) -> Result<(), error::Error> {
+pub fn handle<'a>(
+    output: &'a mut schema::Question,
+    question_body_data: &serde_json::Value,
+) -> Result<(), error::Error> {
     output.question_type = schema::QuestionType::MCQ;
     output.answer = question_body_data
         .get("correct_options")
         .ok_or_else(|| {
-            error::Error::DeserializeError(
+            error::Error::MissingAnswerError(
                 "Failed to get the question's 'correct_options' field".to_string(),
             )
         })?
         .get(0)
         .ok_or_else(|| {
-            error::Error::DeserializeError(
+            error::Error::MissingAnswerError(
                 "Failed to get the question's 'correct_options' field's first element".to_string(),
             )
-        })?.as_str()
+        })?
+        .as_str()
         .ok_or_else(|| {
-            error::Error::DeserializeError(
-                "Failed to get the question's 'correct_options' field's first element as a string".to_string(),
+            error::Error::MissingAnswerError(
+                "Failed to get the question's 'correct_options' field's first element as a string"
+                    .to_string(),
             )
         })?
         .to_string();
@@ -37,7 +42,8 @@ pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_j
         })?;
     output.options = HashMap::new();
     for option in options_array {
-        let option_key = option.get("identifier")
+        let option_key = option
+            .get("identifier")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
                     "Failed to get the option's 'identifier' field".to_string(),
@@ -48,8 +54,10 @@ pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_j
                 error::Error::DeserializeError(
                     "Failed to get the option's 'identifier' field as a string".to_string(),
                 )
-            })?.to_string();
-        let option_value = option.get("content")
+            })?
+            .to_string();
+        let option_value = option
+            .get("content")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
                     "Failed to get the option's 'content' field".to_string(),
@@ -60,7 +68,8 @@ pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_j
                 error::Error::DeserializeError(
                     "Failed to get the option's 'content' field as a string".to_string(),
                 )
-            })?.to_string();
+            })?
+            .to_string();
         output.options.insert(option_key, option_value);
     }
     Ok(())

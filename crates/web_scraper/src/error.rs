@@ -6,6 +6,7 @@ pub enum Error {
     HtmlSelectorError(String),
     SerializeError(String),
     DeserializeError(String),
+    MissingAnswerError(String),
     BoaEngineError(String),
 }
 
@@ -18,6 +19,7 @@ impl std::string::ToString for Error {
             Error::HtmlSelectorError(err_str) => format!("HtmlSelectorError: {}", err_str),
             Error::SerializeError(err_str) => format!("SerializeError: {}", err_str),
             Error::DeserializeError(err_str) => format!("DeserializeError: {}", err_str),
+            Error::MissingAnswerError(err_str) => format!("MissingAnswerError: {}", err_str),
             Error::BoaEngineError(err_str) => format!("BoaEngineError: {}", err_str),
         }
     }

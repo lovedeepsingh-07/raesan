@@ -10,8 +10,9 @@ async fn main() {
         .filter_level(log::LevelFilter::Off)
         .init();
     let mut web_scraper = web_scraper::WebScraper::default();
-    if let Err(e) = web_scraper.extract(JEE_MAIN_URL).await {
+
+    if let Err(e) = web_scraper.extract_exam(JEE_MAIN_URL).await {
         log::error!("Failed to run web scraper, {}", e.to_string());
     }
-    log::info!("{:#?}", web_scraper);
+    std::fs::write("shit.txt", format!("{:#?}", web_scraper)).unwrap();
 }

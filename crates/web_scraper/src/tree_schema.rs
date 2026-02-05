@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)]
 
-use std::collections::HashMap;
 use crate::schema;
+use std::collections::HashMap;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct T_Exam {
