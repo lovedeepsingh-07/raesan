@@ -1,8 +1,8 @@
-mod chapter_page;
 mod error;
 mod exam_page;
 mod page_metadata;
-mod schema;
+pub mod schema;
+pub mod tree_schema;
 
 pub const JEE_MAIN_URL: &'static str = "https://questions.examside.com/past-years/jee/jee-main";
 pub const NEET_URL: &'static str = "https://questions.examside.com/past-years/medical/neet";
@@ -11,14 +11,12 @@ pub const JEE_ADVANCED_URL: &'static str =
 
 pub async fn run() -> Result<(), error::Error> {
     let exam_page_metadata = page_metadata::extract(JEE_MAIN_URL).await?;
-    let mut exam_schema = exam_page::extract(exam_page_metadata).await?;
-
-    let subject_obj = exam_schema.subjects.get("physics").unwrap();
-    let chapter_obj = subject_obj.chapters.get("units-and-measurements").unwrap();
-    let chapter_page_metadata = page_metadata::extract(
-        format!("{}/{}/{}", JEE_MAIN_URL, subject_obj.key, chapter_obj.key).as_str(),
-    )
-    .await?;
-    chapter_page::extract(chapter_page_metadata, &mut exam_schema).await?;
+    let exam_data = exam_page::exam_data::extract(&exam_page_metadata)?;
+    log::info!("{:#?}", exam_data);
+    let (subject_store, chapter_json_array) =
+        exam_page::subject_data::extract(&exam_page_metadata)?;
+    log::info!("{:#?}", subject_store);
+    let chapter_store = exam_page::chapter_data::extract(chapter_json_array)?;
+    log::info!("{:#?}", chapter_store);
     Ok(())
 }

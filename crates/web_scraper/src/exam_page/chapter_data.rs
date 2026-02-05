@@ -1,20 +1,14 @@
 use crate::{error, schema};
 
-pub async fn extract(
-    subject_data: &serde_json::Value,
-    output: &mut schema::Subject,
-) -> Result<(), error::Error> {
-    let chapters_field = subject_data.get("chapters").ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the 'chapters' field".to_string())
-    })?;
-    let chapters_array = chapters_field.as_array().ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the 'chapters' field as an array".to_string())
-    })?;
+pub fn extract<'a>(
+    chapter_json_array: Vec<&'a serde_json::Value>,
+) -> Result<schema::ChapterStore, error::Error> {
+    let mut output = schema::ChapterStore::default();
 
-    for chapter in chapters_array {
+    for chapter_json in chapter_json_array {
         let mut output_chapter = schema::Chapter::default();
 
-        output_chapter.key = chapter
+        output_chapter.key = chapter_json
             .get("key")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -28,7 +22,7 @@ pub async fn extract(
                 )
             })?
             .to_string();
-        output_chapter.exam_key = chapter
+        output_chapter.exam_key = chapter_json
             .get("exam")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -42,7 +36,7 @@ pub async fn extract(
                 )
             })?
             .to_string();
-        output_chapter.subject_key = chapter
+        output_chapter.subject_key = chapter_json
             .get("subject")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -56,7 +50,7 @@ pub async fn extract(
                 )
             })?
             .to_string();
-        output_chapter.title = chapter
+        output_chapter.title = chapter_json
             .get("title")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -70,7 +64,7 @@ pub async fn extract(
                 )
             })?
             .to_string();
-        output_chapter.group = chapter
+        output_chapter.group = chapter_json
             .get("chapterGroup")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -85,9 +79,8 @@ pub async fn extract(
             })?
             .to_string();
 
-        output
-            .chapters
-            .insert(output_chapter.key.clone(), output_chapter);
+        output.0.push(output_chapter);
     }
-    Ok(())
+
+    Ok(output)
 }

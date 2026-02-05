@@ -1,6 +1,7 @@
 use crate::{error, schema};
 
 pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_json::Value) -> Result<(), error::Error> {
+    output.question_type = schema::QuestionType::INTEGER;
     output.answer = question_body_data
         .get("answer")
         .ok_or_else(|| {

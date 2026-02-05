@@ -2,6 +2,7 @@ use crate::{error, schema};
 use std::collections::HashMap;
 
 pub fn handle<'a>(output: &'a mut schema::Question, question_body_data: &serde_json::Value) -> Result<(), error::Error> {
+    output.question_type = schema::QuestionType::MCQ;
     output.answer = question_body_data
         .get("correct_options")
         .ok_or_else(|| {

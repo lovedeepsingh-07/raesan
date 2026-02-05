@@ -3,38 +3,33 @@
 use std::collections::HashMap;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct ExamStore(pub Vec<Exam>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct Exam {
+pub struct T_Exam {
     pub key: String,
     pub title: String,
     pub group: String,
+    pub subjects: HashMap<String, T_Subject>,
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct SubjectStore(pub Vec<Subject>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct Subject {
+pub struct T_Subject {
     pub key: String,
-    pub exam_key: String,
     pub title: String,
+    pub chapters: HashMap<String, T_Chapter>,
 }
+
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct ChapterStore(pub Vec<Chapter>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct Chapter {
+pub struct T_Chapter {
     pub key: String,
     pub exam_key: String,
     pub subject_key: String,
     pub title: String,
     pub group: String,
+    pub questions: Vec<T_Question>,
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct QuestionStore(pub Vec<Question>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct Question {
-    pub question_type: QuestionType,
+pub struct T_Question {
+    pub question_type: T_QuestionType,
     pub exam_key: String,
     pub subject_key: String,
     pub chapter_key: String,
@@ -45,8 +40,8 @@ pub struct Question {
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub enum QuestionType {
+pub enum T_QuestionType {
     #[default]
-    MCQ,
-    INTEGER,
+    T_MCQ,
+    T_INTEGER,
 }
