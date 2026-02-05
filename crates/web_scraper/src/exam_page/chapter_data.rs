@@ -2,8 +2,8 @@ use crate::{error, schema};
 
 pub fn extract<'a>(
     chapter_json_array: Vec<&'a serde_json::Value>,
-) -> Result<schema::ChapterStore, error::Error> {
-    let mut output = schema::ChapterStore::default();
+) -> Result<Vec<schema::Chapter>, error::Error> {
+    let mut output: Vec<schema::Chapter> = Vec::new();
 
     for chapter_json in chapter_json_array {
         let mut output_chapter = schema::Chapter::default();
@@ -79,7 +79,7 @@ pub fn extract<'a>(
             })?
             .to_string();
 
-        output.0.push(output_chapter);
+        output.push(output_chapter);
     }
 
     Ok(output)

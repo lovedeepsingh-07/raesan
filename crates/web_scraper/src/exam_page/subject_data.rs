@@ -2,8 +2,8 @@ use crate::{error, schema};
 
 pub fn extract<'a>(
     exam_page_metadata: &'a serde_json::Value,
-) -> Result<(schema::SubjectStore, Vec<&'a serde_json::Value>), error::Error> {
-    let mut output = schema::SubjectStore::default();
+) -> Result<(Vec<schema::Subject>, Vec<&'a serde_json::Value>), error::Error> {
+    let mut output: Vec<schema::Subject> = Vec::new();
 
     let subjects_field = exam_page_metadata.get("subjects").ok_or_else(|| {
         error::Error::DeserializeError("Failed to get the 'subjects' field".to_string())
@@ -60,7 +60,7 @@ pub fn extract<'a>(
             })?
             .to_string();
 
-        output.0.push(output_subject);
+        output.push(output_subject);
 
         let chapters_field = subject_json.get("chapters").ok_or_else(|| {
             error::Error::DeserializeError("Failed to get the 'chapters' field".to_string())

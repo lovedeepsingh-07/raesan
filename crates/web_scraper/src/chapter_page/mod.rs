@@ -5,8 +5,8 @@ use crate::{error, schema};
 
 pub fn extract(
     chapter_page_metadata: &serde_json::Value,
-) -> Result<schema::QuestionStore, error::Error> {
-    let mut output = schema::QuestionStore::default();
+) -> Result<Vec<schema::Question>, error::Error> {
+    let mut output: Vec<schema::Question> = Vec::new();
 
     let question_types_array = chapter_page_metadata
         .get("questions")
@@ -158,7 +158,7 @@ pub fn extract(
                 }
             }
 
-            output.0.push(output_chapter);
+            output.push(output_chapter);
         }
     }
 

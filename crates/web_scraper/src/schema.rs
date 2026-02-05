@@ -3,8 +3,6 @@
 use std::collections::HashMap;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct ExamStore(pub Vec<Exam>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Exam {
     pub key: String,
     pub title: String,
@@ -12,15 +10,12 @@ pub struct Exam {
 }
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct SubjectStore(pub Vec<Subject>);
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Subject {
     pub key: String,
     pub exam_key: String,
     pub title: String,
 }
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct ChapterStore(pub Vec<Chapter>);
+
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Chapter {
     pub key: String,
@@ -30,8 +25,6 @@ pub struct Chapter {
     pub group: String,
 }
 
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct QuestionStore(pub Vec<Question>);
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Question {
     pub question_type: QuestionType,
