@@ -16,16 +16,13 @@ pub struct WebScraper {
 impl WebScraper {
     pub async fn extract_exam(&mut self, exam_url: &str) -> Result<(), error::Error> {
         log::info!("Deserializing exam: {:#?}", exam_url);
+
         let exam_page_metadata = page_metadata::extract(exam_url).await?;
+        let (exam, subject_store, chapter_store) = exam_page::extract(&exam_page_metadata)?;
 
-        let exam = exam_page::exam_data::extract(&exam_page_metadata)?;
         self.exam_store.push(exam);
-
-        let (subject_store, chapter_json_array) =
-            exam_page::subject_data::extract(&exam_page_metadata)?;
         self.subject_store.extend(subject_store);
 
-        let chapter_store = exam_page::chapter_data::extract(chapter_json_array)?;
         for curr_chapter in chapter_store.iter() {
             let chapter_page_url = format!(
                 "{}/{}/{}",
@@ -88,8 +85,8 @@ impl WebScraper {
                 continue;
             }
         }
-        self.chapter_store.extend(chapter_store);
 
+        self.chapter_store.extend(chapter_store);
         Ok(())
     }
 }

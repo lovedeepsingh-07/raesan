@@ -1,14 +1,19 @@
-use crate::{error, schema};
+use crate::error;
 
-pub fn extract<'a>(
-    chapter_json_array: Vec<&'a serde_json::Value>,
-) -> Result<Vec<schema::Chapter>, error::Error> {
-    let mut output: Vec<schema::Chapter> = Vec::new();
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+pub struct Chapter {
+    pub key: String,
+    pub exam_key: String,
+    pub subject_key: String,
+    pub title: String,
+    pub group: String,
+}
 
-    for chapter_json in chapter_json_array {
-        let mut output_chapter = schema::Chapter::default();
+impl Chapter {
+    pub fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {
+        let mut output = Self::default();
 
-        output_chapter.key = chapter_json
+        output.key = json
             .get("key")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -22,7 +27,7 @@ pub fn extract<'a>(
                 )
             })?
             .to_string();
-        output_chapter.exam_key = chapter_json
+        output.exam_key = json
             .get("exam")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -36,7 +41,7 @@ pub fn extract<'a>(
                 )
             })?
             .to_string();
-        output_chapter.subject_key = chapter_json
+        output.subject_key = json
             .get("subject")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -50,7 +55,7 @@ pub fn extract<'a>(
                 )
             })?
             .to_string();
-        output_chapter.title = chapter_json
+        output.title = json
             .get("title")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -64,7 +69,7 @@ pub fn extract<'a>(
                 )
             })?
             .to_string();
-        output_chapter.group = chapter_json
+        output.group = json
             .get("chapterGroup")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
@@ -79,8 +84,6 @@ pub fn extract<'a>(
             })?
             .to_string();
 
-        output.push(output_chapter);
+        Ok(output)
     }
-
-    Ok(output)
 }

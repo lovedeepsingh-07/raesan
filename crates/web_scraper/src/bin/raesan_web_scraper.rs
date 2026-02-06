@@ -1,9 +1,9 @@
 pub const JEE_MAIN_URL: &'static str = "https://questions.examside.com/past-years/jee/jee-main";
 pub const NEET_URL: &'static str = "https://questions.examside.com/past-years/medical/neet";
+pub const JEE_ADVANCED_URL: &'static str = "https://questions.examside.com/past-years/jee/jee-advanced";
 
 #[tokio::main]
 async fn main() {
-    "https://questions.examside.com/past-years/jee/jee-advanced";
     env_logger::Builder::new()
         .filter_module("tester", log::LevelFilter::Debug)
         .filter_module("web_scraper", log::LevelFilter::Debug)

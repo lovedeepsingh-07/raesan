@@ -1,6 +1,7 @@
 #[derive(Debug)]
 pub enum Error {
     NotFoundError(String),
+    InvalidInputError(String),
     RequestError(String),
     ParseError(String),
     HtmlSelectorError(String),
@@ -14,6 +15,7 @@ impl std::string::ToString for Error {
     fn to_string(&self) -> String {
         match self {
             Error::NotFoundError(err_str) => format!("NotFoundError: {}", err_str),
+            Error::InvalidInputError(err_str) => format!("InvalidInputError: {}", err_str),
             Error::RequestError(err_str) => format!("RequestError: {}", err_str),
             Error::ParseError(err_str) => format!("ParseError: {}", err_str),
             Error::HtmlSelectorError(err_str) => format!("HtmlSelectorError: {}", err_str),
