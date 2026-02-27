@@ -29,7 +29,7 @@ async fn main() {
     let data_folder_path = match cli::get_data_folder_path(cli_args) {
         Ok(out) => out,
         Err(e) => {
-            log::error!("Failed to get data folder path, {}", e.to_string());
+            log::error!("Failed to get data folder path, {}", e);
             return;
         }
     };
@@ -51,7 +51,7 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
                     Err(e) => TaskResult::Failed(e),
                 }
             },
-            _ = daemon_shutdown_rx.wait_for(|val| *val == true) => TaskResult::Shutdown,
+            _ = daemon_shutdown_rx.wait_for(|val| *val) => TaskResult::Shutdown,
         }
     });
     let mut web_server_shutdown_rx = shutdown_rx.clone();
@@ -63,7 +63,7 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
                     Err(e) => TaskResult::Failed(e),
                 }
             },
-            _ = web_server_shutdown_rx.wait_for(|val| *val == true) => TaskResult::Shutdown,
+            _ = web_server_shutdown_rx.wait_for(|val| *val) => TaskResult::Shutdown,
         }
     });
 
@@ -79,10 +79,10 @@ async fn run_tasks(data_folder_path: std::path::PathBuf) {
                         log::error!("Task shut down");
                     },
                     Ok(TaskResult::Failed(e)) => {
-                        log::error!("Task failed with error: {}", e.to_string());
+                        log::error!("Task failed with error: {}", e);
                     },
                     Err(e) => {
-                        log::error!("Failed to join task, {}", e.to_string());
+                        log::error!("Failed to join task, {}", e);
                     },
                 }
             }

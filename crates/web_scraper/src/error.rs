@@ -11,18 +11,18 @@ pub enum Error {
     BoaEngineError(String),
 }
 
-impl std::string::ToString for Error {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Error::NotFoundError(err_str) => format!("NotFoundError: {}", err_str),
-            Error::InvalidInputError(err_str) => format!("InvalidInputError: {}", err_str),
-            Error::RequestError(err_str) => format!("RequestError: {}", err_str),
-            Error::ParseError(err_str) => format!("ParseError: {}", err_str),
-            Error::HtmlSelectorError(err_str) => format!("HtmlSelectorError: {}", err_str),
-            Error::SerializeError(err_str) => format!("SerializeError: {}", err_str),
-            Error::DeserializeError(err_str) => format!("DeserializeError: {}", err_str),
-            Error::MissingAnswerError(err_str) => format!("MissingAnswerError: {}", err_str),
-            Error::BoaEngineError(err_str) => format!("BoaEngineError: {}", err_str),
+            Error::NotFoundError(err_str) => write!(f, "NotFoundError: {}", err_str),
+            Error::InvalidInputError(err_str) => write!(f, "InvalidInputError: {}", err_str),
+            Error::RequestError(err_str) => write!(f, "RequestError: {}", err_str),
+            Error::ParseError(err_str) => write!(f, "ParseError: {}", err_str),
+            Error::HtmlSelectorError(err_str) => write!(f, "HtmlSelectorError: {}", err_str),
+            Error::SerializeError(err_str) => write!(f, "SerializeError: {}", err_str),
+            Error::DeserializeError(err_str) => write!(f, "DeserializeError: {}", err_str),
+            Error::MissingAnswerError(err_str) => write!(f, "MissingAnswerError: {}", err_str),
+            Error::BoaEngineError(err_str) => write!(f, "BoaEngineError: {}", err_str),
         }
     }
 }

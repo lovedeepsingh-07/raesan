@@ -6,7 +6,7 @@ pub(crate) async fn route(
 ) -> impl IntoResponse {
     server_state
         .command_tx
-        .send(command::Command::API)
+        .send(command::Command::Api)
         .await
         .unwrap();
     String::from("API_RESPONSE")

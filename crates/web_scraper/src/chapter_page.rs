@@ -9,13 +9,13 @@ pub fn extract(
         .get("questions")
         .ok_or_else(|| {
             error::Error::DeserializeError(
-                "Failed to get the chapter's 'question' field".to_string(),
+                "Failed to get the chapter[questions] (question_type) field".to_string(),
             )
         })?
         .as_array()
         .ok_or_else(|| {
             error::Error::DeserializeError(
-                "Failed to get the chapter's 'question' field as an array".to_string(),
+                "Failed to get the chapter[questions] (question_type) field as an array".to_string(),
             )
         })?;
 
@@ -24,13 +24,13 @@ pub fn extract(
             .get("key")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question type's 'key' field".to_string(),
+                    "Failed to get the question[key] (question_type) field".to_string(),
                 )
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question type's 'key' field as a string".to_string(),
+                    "Failed to get the question[key] (question_type) field as a string".to_string(),
                 )
             })?;
         if type_key == "mcqm" {
@@ -40,24 +40,24 @@ pub fn extract(
             .get("questions")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question type's 'question' field".to_string(),
+                    "Failed to get the question[questions] (question_type) field".to_string(),
                 )
             })?
             .as_array()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question type's 'question' field as an array".to_string(),
+                    "Failed to get the question[questions] (question_type) field as an array".to_string(),
                 )
             })?;
 
         for question_json in question_array {
             let question = match schema::Question::from_json(
                 schema::QuestionType::from(type_key),
-                &question_json,
+                question_json,
             ) {
                 Ok(out) => out,
                 Err(e) => {
-                    log::warn!("Failed to deserialize question, {}", e.to_string());
+                    log::warn!("Failed to deserialize question, {}", e);
                     continue;
                 }
             };

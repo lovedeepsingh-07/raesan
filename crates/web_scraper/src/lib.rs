@@ -53,7 +53,7 @@ impl WebScraper {
                             log::warn!(
                                 "Failed to extract page metadata from url: {:#?}, {}",
                                 chapter_page_url.as_str(),
-                                e.to_string()
+                                e
                             );
                             attempts += 1;
                             continue;
@@ -66,7 +66,7 @@ impl WebScraper {
                         log::warn!(
                             "Failed to deserialize page metadata from url: {:#?}, {}",
                             chapter_page_url.as_str(),
-                            e.to_string()
+                            e
                         );
                         attempts += 1;
                         continue;

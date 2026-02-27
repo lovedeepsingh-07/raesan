@@ -18,61 +18,59 @@ impl Question {
         question_type: schema::QuestionType,
         json: &serde_json::Value,
     ) -> Result<Self, error::Error> {
-        let mut output = Self::default();
-
-        output.exam_key = json
+        let exam_key = json
             .get("exam")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'exam' field".to_string(),
+                    "Failed to get the question[exam] field".to_string(),
                 )
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'exam' field as a string".to_string(),
+                    "Failed to get the question[exam] field as a string".to_string(),
                 )
             })?
             .to_string();
-        output.subject_key = json
+        let subject_key = json
             .get("subject")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'subject' field".to_string(),
+                    "Failed to get the question[subject] field".to_string(),
                 )
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'subject' field as a string".to_string(),
+                    "Failed to get the question[subject] field as a string".to_string(),
                 )
             })?
             .to_string();
-        output.chapter_key = json
+        let chapter_key = json
             .get("chapter")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'chapter' field".to_string(),
+                    "Failed to get the question[chapter] field".to_string(),
                 )
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'chapter' field as a string".to_string(),
+                    "Failed to get the question[chapter] field as a string".to_string(),
                 )
             })?
             .to_string();
-        output.chapter_group = json
+        let chapter_group = json
             .get("chapterGroup")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'chapterGroup' field".to_string(),
+                    "Failed to get the question[chapterGroup] field".to_string(),
                 )
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'chapterGroup' field as a string".to_string(),
+                    "Failed to get the question[chapterGroup] field as a string".to_string(),
                 )
             })?
             .to_string();
@@ -81,22 +79,21 @@ impl Question {
             .get("question")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'question' field".to_string(),
+                    "Failed to get the question[question] field".to_string(),
                 )
             })?
             .get("en")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'question' field".to_string(),
+                    "Failed to get the question[question][en] field".to_string(),
                 )
             })?;
-        output.content = question_body_data
+        let question_content = question_body_data
             .get("content")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    // "Failed to get the question's 'content' field".to_string(),
                     format!(
-                        "Failed to get the question's 'content' field, {:#?}",
+                        "Failed to get the question[question][en][content] field, {:#?}",
                         question_body_data
                     ),
                 )
@@ -104,13 +101,22 @@ impl Question {
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'content' field as a string".to_string(),
+                    "Failed to get the question[question][en][content] field as a string".to_string(),
                 )
             })?
             .to_string();
 
-        output.answer = question_type.get_answer(&question_body_data)?;
-        output.options = question_type.get_options(&question_body_data)?;
-        Ok(output)
+        let question_answer = question_type.get_answer(question_body_data)?;
+        let question_options = question_type.get_options(question_body_data)?;
+        Ok(Question {
+            question_type,
+            exam_key,
+            subject_key,
+            chapter_key,
+            chapter_group,
+            content: question_content,
+            options: question_options,
+            answer: question_answer,
+        })
     }
 }

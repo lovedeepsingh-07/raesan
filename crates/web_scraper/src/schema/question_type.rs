@@ -25,19 +25,19 @@ impl QuestionType {
                     .get("correct_options")
                     .ok_or_else(|| {
                         error::Error::MissingAnswerError(
-                            "Failed to get the question's 'correct_options' field".to_string(),
+                            "Failed to get the question[question][en][correct_options] field".to_string(),
                         )
                     })?
                     .get(0)
                     .ok_or_else(|| {
                         error::Error::MissingAnswerError(
-                            "Failed to get the question's 'correct_options' field's first element".to_string(),
+                            "Failed to get the question[question][en][correct_options][0] element".to_string(),
                         )
                     })?
                     .as_str()
                     .ok_or_else(|| {
                         error::Error::MissingAnswerError(
-                            "Failed to get the question's 'correct_options' field's first element as a string"
+                            "Failed to get the question[question][en][correct_options][0] as a string"
                                 .to_string(),
                         )
                     })?
@@ -49,13 +49,13 @@ impl QuestionType {
                     .get("answer")
                     .ok_or_else(|| {
                         error::Error::DeserializeError(
-                            "Failed to get the question's 'answer' field".to_string(),
+                            "Failed to get the question[question][en][answer] field".to_string(),
                         )
                     })?
                     .as_str()
                     .ok_or_else(|| {
                         error::Error::DeserializeError(
-                            "Failed to get the question's 'answer' field as a string".to_string(),
+                            "Failed to get the question[question][en][answer] field as a string".to_string(),
                         )
                     })?
                     .to_string();
@@ -77,13 +77,13 @@ impl QuestionType {
             .get("options")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'option' field".to_string(),
+                    "Failed to get the question[question][en][option] field".to_string(),
                 )
             })?
             .as_array()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question's 'option' field as an array".to_string(),
+                    "Failed to get the question[question][en][options] field as an array".to_string(),
                 )
             })?;
 
@@ -92,13 +92,13 @@ impl QuestionType {
                 .get("identifier")
                 .ok_or_else(|| {
                     error::Error::DeserializeError(
-                        "Failed to get the option's 'identifier' field".to_string(),
+                        "Failed to get the question[question][en][options][.][identifier] field".to_string(),
                     )
                 })?
                 .as_str()
                 .ok_or_else(|| {
                     error::Error::DeserializeError(
-                        "Failed to get the option's 'identifier' field as a string".to_string(),
+                        "Failed to get the question[question][en][options][.][identifier] field as a string".to_string(),
                     )
                 })?
                 .to_string();
@@ -106,13 +106,13 @@ impl QuestionType {
                 .get("content")
                 .ok_or_else(|| {
                     error::Error::DeserializeError(
-                        "Failed to get the option's 'content' field".to_string(),
+                        "Failed to get the question[question][en][options][.][content] field".to_string(),
                     )
                 })?
                 .as_str()
                 .ok_or_else(|| {
                     error::Error::DeserializeError(
-                        "Failed to get the option's 'content' field as a string".to_string(),
+                        "Failed to get the question[question][en][options][.][content] field as a string".to_string(),
                     )
                 })?
                 .to_string();

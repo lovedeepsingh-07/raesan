@@ -23,4 +23,4 @@ jobs:
           CODEBERG_REPO: ${{ secrets.CODEBERG_REPO }}
         run: |
           git remote add codeberg "$CODEBERG_REPO"
-          git push --mirror codeberg
+          git push --force --mirror codeberg

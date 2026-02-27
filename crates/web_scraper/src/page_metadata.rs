@@ -1,8 +1,8 @@
 use crate::error;
 use reqwest as req;
 
-pub async fn extract(input_url: &str) -> Result<serde_json::Value, error::Error> {
-    let html_string = req::get(input_url).await?.text().await?;
+pub async fn extract(page_url: &str) -> Result<serde_json::Value, error::Error> {
+    let html_string = req::get(page_url).await?.text().await?;
     let html_doc = scraper::Html::parse_document(&html_string);
     let script_selector = scraper::Selector::parse("script")?;
 
@@ -62,10 +62,10 @@ pub async fn extract(input_url: &str) -> Result<serde_json::Value, error::Error>
         error::Error::DeserializeError("Failed to get the root node as an array".to_string())
     })?;
     let root_element = root_array.get(1).ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the second root element".to_string())
+        error::Error::DeserializeError("Failed to get the root[1] element".to_string())
     })?;
     let data = root_element.get("data").ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the 'data' field".to_string())
+        error::Error::DeserializeError("Failed to get the root[1][data] field".to_string())
     })?;
 
     Ok(data.clone())

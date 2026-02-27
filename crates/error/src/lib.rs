@@ -11,17 +11,17 @@ pub enum Error {
     RequestError(String),
 }
 
-impl std::string::ToString for Error {
-    fn to_string(&self) -> String {
+impl std::fmt::Display for Error {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            Error::IOError(err_str) => format!("IOError: {}", err_str),
-            Error::FSError(err_str) => format!("FSError: {}", err_str),
-            Error::ParseError(err_str) => format!("ParseError: {}", err_str),
-            Error::ProtocolError(err_str) => format!("ProtocolError: {}", err_str),
-            Error::NotFoundError(err_str) => format!("NotFoundError: {}", err_str),
-            Error::ChannelSendError(err_str) => format!("ChannelSendError: {}", err_str),
-            Error::ChannelReceiveError(err_str) => format!("ChannelReceiveError: {}", err_str),
-            Error::RequestError(err_str) => format!("RequestError: {}", err_str),
+            Error::IOError(err_str) => write!(f, "IOError: {}", err_str),
+            Error::FSError(err_str) => write!(f, "FSError: {}", err_str),
+            Error::ParseError(err_str) => write!(f, "ParseError: {}", err_str),
+            Error::ProtocolError(err_str) => write!(f, "ProtocolError: {}", err_str),
+            Error::NotFoundError(err_str) => write!(f, "NotFoundError: {}", err_str),
+            Error::ChannelSendError(err_str) => write!(f, "ChannelSendError: {}", err_str),
+            Error::ChannelReceiveError(err_str) => write!(f, "ChannelReceiveError: {}", err_str),
+            Error::RequestError(err_str) => write!(f, "RequestError: {}", err_str),
         }
     }
 }
