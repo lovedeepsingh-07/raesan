@@ -51,7 +51,7 @@ impl Exam {
         Ok(Exam {
             key: exam_key,
             title: exam_title,
-            group: exam_group
+            group: exam_group,
         })
     }
 }

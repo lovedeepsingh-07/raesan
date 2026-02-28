@@ -12,9 +12,7 @@ impl Subject {
         let subject_key = json
             .get("key")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the subject[key] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the subject[key] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
@@ -26,9 +24,7 @@ impl Subject {
         let exam_key = json
             .get("exam")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the subject[exam] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the subject[exam] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
@@ -40,9 +36,7 @@ impl Subject {
         let subject_title = json
             .get("title")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the subject[title] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the subject[title] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {

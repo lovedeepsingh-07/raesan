@@ -55,7 +55,8 @@ impl QuestionType {
                     .as_str()
                     .ok_or_else(|| {
                         error::Error::DeserializeError(
-                            "Failed to get the question[question][en][answer] field as a string".to_string(),
+                            "Failed to get the question[question][en][answer] field as a string"
+                                .to_string(),
                         )
                     })?
                     .to_string();
@@ -83,7 +84,8 @@ impl QuestionType {
             .as_array()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question[question][en][options] field as an array".to_string(),
+                    "Failed to get the question[question][en][options] field as an array"
+                        .to_string(),
                 )
             })?;
 

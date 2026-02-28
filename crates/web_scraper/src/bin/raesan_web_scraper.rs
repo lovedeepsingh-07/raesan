@@ -1,7 +1,4 @@
-pub const JEE_MAIN_URL: &str = "https://questions.examside.com/past-years/jee/jee-main";
-pub const NEET_URL: &str = "https://questions.examside.com/past-years/medical/neet";
-pub const JEE_ADVANCED_URL: &str =
-    "https://questions.examside.com/past-years/jee/jee-advanced";
+use sqlx::{sqlite, Row};
 
 #[tokio::main]
 async fn main() {
@@ -10,10 +7,26 @@ async fn main() {
         .filter_module("web_scraper", log::LevelFilter::Debug)
         .filter_level(log::LevelFilter::Off)
         .init();
-    let mut web_scraper = web_scraper::WebScraper::default();
 
-    if let Err(e) = web_scraper.extract_exam(JEE_MAIN_URL).await {
-        log::error!("Failed to run web scraper, {}", e);
+    let pool = sqlite::SqlitePool::connect("sqlite::memory:")
+        .await
+        .unwrap();
+    sqlx::migrate!("../../migrations").run(&pool).await.unwrap();
+
+    let mut conn = pool.acquire().await.unwrap();
+
+    sqlx::query(&format!(
+        "INSERT INTO users ( id, name ) VALUES ( '{}', '{}' )",
+        "this_is_id", "this_is_name"
+    ))
+    .execute(&mut *conn)
+    .await
+    .unwrap();
+
+    let rows = sqlx::query("SELECT * FROM users").fetch_all(&mut *conn).await.unwrap();
+    for row in rows {
+        let id: String = row.get("id");
+        let name: String = row.get("name");
+        log::info!("({}, {})", id, name);
     }
-    std::fs::write("shit.txt", format!("{:#?}", web_scraper)).unwrap();
 }

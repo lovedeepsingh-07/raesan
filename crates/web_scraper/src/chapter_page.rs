@@ -15,7 +15,8 @@ pub fn extract(
         .as_array()
         .ok_or_else(|| {
             error::Error::DeserializeError(
-                "Failed to get the chapter[questions] (question_type) field as an array".to_string(),
+                "Failed to get the chapter[questions] (question_type) field as an array"
+                    .to_string(),
             )
         })?;
 
@@ -46,7 +47,8 @@ pub fn extract(
             .as_array()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question[questions] (question_type) field as an array".to_string(),
+                    "Failed to get the question[questions] (question_type) field as an array"
+                        .to_string(),
                 )
             })?;
 

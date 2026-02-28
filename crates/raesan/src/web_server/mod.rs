@@ -1,14 +1,14 @@
-pub(crate) mod routes;
+pub mod routes;
 
-use crate::{command, constants};
+use crate::{command, constants, error};
 use tokio::sync::mpsc;
 
 #[derive(Debug, Clone)]
-pub(crate) struct ServerState {
-    pub(crate) command_tx: mpsc::Sender<command::Command>,
+pub struct ServerState {
+    pub command_tx: mpsc::Sender<command::Command>,
 }
 
-pub(crate) async fn run(command_tx: mpsc::Sender<command::Command>) -> Result<(), error::Error> {
+pub async fn run(command_tx: mpsc::Sender<command::Command>) -> Result<(), error::Error> {
     let server_state = ServerState { command_tx };
 
     let router = axum::Router::new()

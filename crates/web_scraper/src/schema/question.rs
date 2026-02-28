@@ -21,9 +21,7 @@ impl Question {
         let exam_key = json
             .get("exam")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[exam] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the question[exam] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
@@ -91,17 +89,16 @@ impl Question {
         let question_content = question_body_data
             .get("content")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    format!(
-                        "Failed to get the question[question][en][content] field, {:#?}",
-                        question_body_data
-                    ),
-                )
+                error::Error::DeserializeError(format!(
+                    "Failed to get the question[question][en][content] field, {:#?}",
+                    question_body_data
+                ))
             })?
             .as_str()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the question[question][en][content] field as a string".to_string(),
+                    "Failed to get the question[question][en][content] field as a string"
+                        .to_string(),
                 )
             })?
             .to_string();

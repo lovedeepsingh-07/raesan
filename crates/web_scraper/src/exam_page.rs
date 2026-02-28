@@ -10,7 +10,9 @@ pub fn extract(
         error::Error::DeserializeError("Failed to get the exam[subjects] field".to_string())
     })?;
     let subjects_array = subjects_field.as_array().ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the exam[subjects] field as an array".to_string())
+        error::Error::DeserializeError(
+            "Failed to get the exam[subjects] field as an array".to_string(),
+        )
     })?;
     let mut chapter_json_array: Vec<&serde_json::Value> = Vec::new();
 
@@ -19,7 +21,9 @@ pub fn extract(
         subject_store.push(subject);
 
         let chapters_field = subject_json.get("chapters").ok_or_else(|| {
-            error::Error::DeserializeError("Failed to get the exam[subjects][.][chapters] field".to_string())
+            error::Error::DeserializeError(
+                "Failed to get the exam[subjects][.][chapters] field".to_string(),
+            )
         })?;
         let chapters_array = chapters_field.as_array().ok_or_else(|| {
             error::Error::DeserializeError(

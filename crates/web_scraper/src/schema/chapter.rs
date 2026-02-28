@@ -14,9 +14,7 @@ impl Chapter {
         let chapter_key = json
             .get("key")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the chapter[key] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the chapter[key] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
@@ -29,9 +27,7 @@ impl Chapter {
         let exam_key = json
             .get("exam")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the chapter[exam] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the chapter[exam] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
@@ -57,9 +53,7 @@ impl Chapter {
         let chapter_title = json
             .get("title")
             .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the chapter[title] field".to_string(),
-                )
+                error::Error::DeserializeError("Failed to get the chapter[title] field".to_string())
             })?
             .as_str()
             .ok_or_else(|| {
