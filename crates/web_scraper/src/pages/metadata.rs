@@ -3,10 +3,11 @@ use reqwest as req;
 
 pub async fn extract(page_url: &str) -> Result<serde_json::Value, error::Error> {
     let html_string = req::get(page_url).await?.text().await?;
-    let html_doc = scraper::Html::parse_document(&html_string);
+    let html = scraper::Html::parse_document(&html_string);
     let script_selector = scraper::Selector::parse("script")?;
 
-    let data_script_result = html_doc.select(&script_selector).find(|item| {
+    // NOTE: get the <script> tag with "data:" inside it, because that is the one that contains the data
+    let data_script_result = html.select(&script_selector).find(|item| {
         item.text()
             .next()
             .is_some_and(|script_text| script_text.contains("data:"))
@@ -18,7 +19,9 @@ pub async fn extract(page_url: &str) -> Result<serde_json::Value, error::Error> 
                     .to_string(),
             )
         })?;
-    let data_text = data_script
+
+    // NOTE: extract the JS text between "data:" and "form: null" and remove the trailing nonsense
+    let js_text = data_script
         .text()
         .next()
         .ok_or_else(|| {
@@ -51,22 +54,30 @@ pub async fn extract(page_url: &str) -> Result<serde_json::Value, error::Error> 
         .0
         .trim();
 
-    let js_code = format!("let data = {}; data", data_text);
+    // NOTE: convert the JS text into a boa_engine result and parse the result into JSON
     let mut context = boa_engine::Context::default();
-    let res = context.eval(boa_engine::Source::from_bytes(&js_code))?;
+    let res = context.eval(boa_engine::Source::from_bytes(&format!(
+        "let data = {}; data",
+        js_text
+    )))?;
     let parsed_json: serde_json::Value = res
         .to_json(&mut context)?
         .ok_or_else(|| error::Error::BoaEngineError("Failed to get computed JSON".to_string()))?;
 
-    let root_array = parsed_json.as_array().ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the root node as an array".to_string())
-    })?;
-    let root_element = root_array.get(1).ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the root[1] element".to_string())
-    })?;
-    let data = root_element.get("data").ok_or_else(|| {
-        error::Error::DeserializeError("Failed to get the root[1][data] field".to_string())
-    })?;
+    // NOTE: get the root data node
+    let data = parsed_json
+        .as_array()
+        .ok_or_else(|| {
+            error::Error::DeserializeError("Failed to get the root node as an array".to_string())
+        })?
+        .get(1)
+        .ok_or_else(|| {
+            error::Error::DeserializeError("Failed to get the root[1] element".to_string())
+        })?
+        .get("data")
+        .ok_or_else(|| {
+            error::Error::DeserializeError("Failed to get the root[1][data] field".to_string())
+        })?;
 
     Ok(data.clone())
 }

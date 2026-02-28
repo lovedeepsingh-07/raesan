@@ -2,12 +2,14 @@ use crate::error;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Exam {
+    pub id: String,
     pub key: String,
     pub title: String,
     pub group: String,
 }
 
 impl Exam {
+    // JSON: { key: String, tite: String, examGroup: String }
     pub fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {
         let exam_key = json
             .get("key")
@@ -49,6 +51,7 @@ impl Exam {
             .to_string();
 
         Ok(Exam {
+            id: String::new(),
             key: exam_key,
             title: exam_title,
             group: exam_group,

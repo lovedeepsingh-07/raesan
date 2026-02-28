@@ -14,6 +14,20 @@ pub struct Question {
 }
 
 impl Question {
+    // JSON: {
+    //   exam: String,
+    //   subject: String,
+    //   chapter: String,
+    //   chapterGroup: String
+    //   question: {
+    //     en: {
+    //       content: String,
+    //       correct_options: [String],
+    //       answer: String,
+    //       options: [ { identifier: String, content: String } ]
+    //     }
+    //   }
+    // }
     pub fn from_json(
         question_type: schema::QuestionType,
         json: &serde_json::Value,

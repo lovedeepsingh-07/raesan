@@ -2,6 +2,7 @@ use crate::error;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct Chapter {
+    pub id: String,
     pub key: String,
     pub exam_key: String,
     pub subject_key: String,
@@ -10,6 +11,13 @@ pub struct Chapter {
 }
 
 impl Chapter {
+    // JSON: {
+    //   key: String,
+    //   exam: String,
+    //   subject: String,
+    //   title: String,
+    //   chapterGroup: String
+    // }
     pub fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {
         let chapter_key = json
             .get("key")
@@ -78,6 +86,7 @@ impl Chapter {
             .to_string();
 
         Ok(Chapter {
+            id: String::new(),
             key: chapter_key,
             exam_key,
             subject_key,
