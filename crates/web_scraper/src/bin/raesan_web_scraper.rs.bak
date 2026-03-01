@@ -1,0 +1,119 @@
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
+use std::str::FromStr;
+
+pub const JEE_MAIN_URL: &str = "https://questions.examside.com/past-years/jee/jee-main";
+pub const NEET_URL: &str = "https://questions.examside.com/past-years/medical/neet";
+pub const JEE_ADVANCED_URL: &str = "https://questions.examside.com/past-years/jee/jee-advanced";
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::Builder::new()
+        .filter_module("raesan_web_scraper", log::LevelFilter::Debug)
+        .filter_module("web_scraper", log::LevelFilter::Debug)
+        .filter_level(log::LevelFilter::Off)
+        .init();
+
+    let options = SqliteConnectOptions::from_str("sqlite://test.db")?
+    .create_if_missing(true);
+    let pool = SqlitePoolOptions::new()
+        .connect_with(options)
+        .await?;
+
+    // Run migrations
+    let mut conn = pool.acquire().await?;
+    for migration in web_scraper::schema::get_migration_queries() {
+        sqlx::query(&migration).execute(&mut *conn).await?;
+    }
+    drop(conn);
+
+    // Begin transaction
+    let mut tx = pool.begin().await?;
+
+    let exam_page_json_metadata = web_scraper::get_page_data(JEE_MAIN_URL).await?;
+
+    let (exam, subjects, chapters) = web_scraper::decode_exam_page(&exam_page_json_metadata)?;
+
+    // ----------------- INSERT EXAM -----------------
+    sqlx::query(
+        r#"INSERT INTO exam (id, key, title, "group")
+           VALUES (?1, ?2, ?3, ?4)"#,
+    )
+    .bind(&exam.id)
+    .bind(&exam.key)
+    .bind(&exam.title)
+    .bind(&exam.group)
+    .execute(&mut *tx)
+    .await?;
+
+    // ----------------- INSERT SUBJECTS -----------------
+    for subject in subjects {
+        sqlx::query(
+            r#"INSERT INTO subject (id, key, exam_id, title)
+               VALUES (?1, ?2, ?3, ?4)"#,
+        )
+        .bind(&subject.id)
+        .bind(&subject.key)
+        .bind(&subject.exam_id)
+        .bind(&subject.title)
+        .execute(&mut *tx)
+        .await?;
+    }
+
+    // ----------------- INSERT CHAPTERS + QUESTIONS -----------------
+    for chapter in chapters {
+        let chapter_page_json_metadata = web_scraper::get_page_data(&format!(
+            "{}/{}/{}",
+            JEE_MAIN_URL, chapter.subject_key, chapter.key
+        ))
+        .await?;
+
+        sqlx::query(
+            r#"INSERT INTO chapter (id, key, subject_id, title, "group")
+               VALUES (?1, ?2, ?3, ?4, ?5)"#,
+        )
+        .bind(&chapter.id)
+        .bind(&chapter.key)
+        .bind(&chapter.subject_id)
+        .bind(&chapter.title)
+        .bind(&chapter.group)
+        .execute(&mut *tx)
+        .await?;
+
+        let questions =
+            web_scraper::decode_chapter_page(chapter.id.clone(), &chapter_page_json_metadata)?;
+
+        for question in questions {
+            sqlx::query(
+                r#"INSERT INTO question
+                   (id, chapter_id, question_type, content, answer)
+                   VALUES (?1, ?2, ?3, ?4, ?5)"#,
+            )
+            .bind(&question.id)
+            .bind(&question.chapter_id)
+            .bind(question.question_type.to_string())
+            .bind(&question.content)
+            .bind(&question.answer)
+            .execute(&mut *tx)
+            .await?;
+
+            for (_, option) in question.options {
+                sqlx::query(
+                    r#"INSERT INTO question_option
+                       (id, question_id, key, value)
+                       VALUES (?1, ?2, ?3, ?4)"#,
+                )
+                .bind(&option.id)
+                .bind(&option.question_id)
+                .bind(&option.key)
+                .bind(&option.value)
+                .execute(&mut *tx)
+                .await?;
+            }
+        }
+    }
+
+    // Commit everything
+    tx.commit().await?;
+
+    Ok(())
+}

@@ -1,4 +1,4 @@
-use crate::error;
+use crate::{error, schema};
 use std::collections::HashMap;
 
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize, PartialEq)]
@@ -13,6 +13,14 @@ impl From<&str> for QuestionType {
         match value.to_lowercase().as_str() {
             "mcq" => QuestionType::MCQ,
             _ => QuestionType::INTEGER,
+        }
+    }
+}
+impl std::fmt::Display for QuestionType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            QuestionType::MCQ => write!(f, "mcq"),
+            QuestionType::INTEGER => write!(f, "integer"),
         }
     }
 }
@@ -67,12 +75,13 @@ impl QuestionType {
     pub fn get_options<'a>(
         &'a self,
         json: &'a serde_json::Value,
-    ) -> Result<HashMap<String, String>, error::Error> {
+        question_id: String,
+    ) -> Result<HashMap<String, schema::QuestionOption>, error::Error> {
         if *self != QuestionType::MCQ {
             return Ok(HashMap::new());
         }
 
-        let mut output: HashMap<String, String> = HashMap::new();
+        let mut output: HashMap<String, schema::QuestionOption> = HashMap::new();
 
         let options_array = json
             .get("options")
@@ -118,7 +127,15 @@ impl QuestionType {
                     )
                 })?
                 .to_string();
-            output.insert(option_key, option_value);
+            output.insert(
+                option_key.clone(),
+                schema::QuestionOption {
+                    id: uuid::Uuid::new_v4().to_string(),
+                    question_id: question_id.clone(),
+                    key: option_key,
+                    value: option_value,
+                },
+            );
         }
 
         return Ok(output);

@@ -1,6 +1,7 @@
 use crate::{error, schema};
 
 pub fn extract(
+    chapter_id: String,
     chapter_page_metadata: &serde_json::Value,
 ) -> Result<Vec<schema::Question>, error::Error> {
     let mut output: Vec<schema::Question> = Vec::new();
@@ -54,6 +55,7 @@ pub fn extract(
 
         for question_json in question_array {
             let question = match schema::Question::from_json(
+                chapter_id.clone(),
                 schema::QuestionType::from(type_key),
                 question_json,
             ) {
