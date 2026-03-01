@@ -1,7 +1,7 @@
 use crate::constants;
 use axum::response::IntoResponse;
 
-pub(crate) async fn route(
+pub async fn route(
     axum::extract::Path(file_path): axum::extract::Path<String>,
 ) -> impl IntoResponse {
     let static_folder = std::path::PathBuf::from(constants::STATIC_FOLDER);

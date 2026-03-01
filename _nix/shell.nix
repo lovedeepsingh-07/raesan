@@ -12,6 +12,7 @@
       pkgs.lld
       pkgs.clang
       pkgs.jq
+      pkgs.sqlite
     ];
     buildInputs = [];
     shellHook = "zsh";

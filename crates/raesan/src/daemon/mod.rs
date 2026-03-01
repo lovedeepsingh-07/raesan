@@ -1,7 +1,7 @@
-use crate::command;
+use crate::{command, error};
 use tokio::sync::mpsc;
 
-pub(crate) async fn run(
+pub async fn run(
     mut command_rx: mpsc::Receiver<command::Command>,
     data_folder_path: std::path::PathBuf,
 ) -> Result<(), error::Error> {

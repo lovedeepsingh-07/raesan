@@ -1,13 +1,25 @@
-use crate::error;
+use crate::{error, string_vec};
 
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Exam {
+    pub id: String,
     pub key: String,
     pub title: String,
     pub group: String,
 }
 
 impl Exam {
+    pub fn get_migration_queries() -> Vec<String> {
+        string_vec![
+            r#"CREATE TABLE IF NOT EXISTS exam (
+                id TEXT PRIMARY KEY,
+                key TEXT NOT NULL,
+                title TEXT NOT NULL,
+                "group" TEXT NOT NULL
+            )"#
+        ]
+    }
+    // JSON: { key: String, tite: String, examGroup: String }
     pub fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {
         let exam_key = json
             .get("key")
@@ -49,9 +61,10 @@ impl Exam {
             .to_string();
 
         Ok(Exam {
+            id: uuid::Uuid::new_v4().to_string(),
             key: exam_key,
             title: exam_title,
-            group: exam_group
+            group: exam_group,
         })
     }
 }

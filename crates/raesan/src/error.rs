@@ -36,18 +36,3 @@ impl<T> From<tokio::sync::mpsc::error::SendError<T>> for Error {
         Error::ChannelSendError(value.to_string())
     }
 }
-impl From<reqwest::Error> for Error {
-    fn from(value: reqwest::Error) -> Self {
-        Error::RequestError(value.to_string())
-    }
-}
-impl From<scraper::error::SelectorErrorKind<'_>> for Error {
-    fn from(value: scraper::error::SelectorErrorKind) -> Self {
-        Error::ParseError(value.to_string())
-    }
-}
-impl From<serde_json::Error> for Error {
-    fn from(value: serde_json::Error) -> Self {
-        Error::ParseError(value.to_string())
-    }
-}
