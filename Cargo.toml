@@ -1,6 +1,14 @@
 [workspace]
 resolver = "3"
-members = ["./crates/frontend", "./crates/raesan", "./crates/web_scraper"]
+members = [
+  "./crates/frontend",
+  "./crates/raesan",
+  "./crates/web_scraper",
+  "./crates/schema",
+]
+
+[workspace.package]
+version = "0.1.0"
 
 [workspace.dependencies]
 boa_engine = "0.21.0"

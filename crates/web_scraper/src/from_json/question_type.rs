@@ -1,34 +1,10 @@
-use crate::{error, schema};
+use crate::error;
 use std::collections::HashMap;
 
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize, PartialEq)]
-pub enum QuestionType {
-    #[default]
-    MCQ,
-    INTEGER,
-}
-
-impl From<&str> for QuestionType {
-    fn from(value: &str) -> Self {
-        match value.to_lowercase().as_str() {
-            "mcq" => QuestionType::MCQ,
-            _ => QuestionType::INTEGER,
-        }
-    }
-}
-impl std::fmt::Display for QuestionType {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl crate::QuestionTypeFromJson for schema::QuestionType {
+    fn get_answer<'a>(&'a self, json: &'a serde_json::Value) -> Result<String, error::Error> {
         match self {
-            QuestionType::MCQ => write!(f, "mcq"),
-            QuestionType::INTEGER => write!(f, "integer"),
-        }
-    }
-}
-
-impl QuestionType {
-    pub fn get_answer<'a>(&'a self, json: &'a serde_json::Value) -> Result<String, error::Error> {
-        match self {
-            QuestionType::MCQ => {
+            schema::QuestionType::MCQ => {
                 let answer = json
                     .get("correct_options")
                     .ok_or_else(|| {
@@ -52,7 +28,7 @@ impl QuestionType {
                     .to_string();
                 return Ok(answer);
             }
-            QuestionType::INTEGER => {
+            schema::QuestionType::INTEGER => {
                 let answer = json
                     .get("answer")
                     .ok_or_else(|| {
@@ -72,12 +48,12 @@ impl QuestionType {
             }
         }
     }
-    pub fn get_options<'a>(
+    fn get_options<'a>(
         &'a self,
-        json: &'a serde_json::Value,
         question_id: String,
+        json: &'a serde_json::Value,
     ) -> Result<HashMap<String, schema::QuestionOption>, error::Error> {
-        if *self != QuestionType::MCQ {
+        if *self != schema::QuestionType::MCQ {
             return Ok(HashMap::new());
         }
 

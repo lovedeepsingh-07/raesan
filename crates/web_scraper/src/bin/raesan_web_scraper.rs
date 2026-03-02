@@ -1,6 +1,5 @@
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use std::str::FromStr;
-use web_scraper::schema;
 
 pub const JEE_MAIN_URL: &str = "https://questions.examside.com/past-years/jee/jee-main";
 pub const NEET_URL: &str = "https://questions.examside.com/past-years/medical/neet";
@@ -19,7 +18,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Run migrations
     let mut conn = pool.acquire().await?;
-    for migration in web_scraper::schema::get_migration_queries() {
+    for migration in schema::get_migration_queries() {
         sqlx::query(&migration).execute(&mut *conn).await?;
     }
     drop(conn);

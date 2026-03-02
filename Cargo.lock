@@ -1110,7 +1110,7 @@ dependencies = [
 
 [[package]]
 name = "frontend"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "leptos",
 ]
@@ -2688,7 +2688,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "raesan"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "axum",
  "clap",
@@ -3175,6 +3175,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "891d81b926048e76efe18581bf793546b4c0eaf8448d72be8de2bbee5fd166e1"
 dependencies = [
  "windows-sys 0.61.2",
+]
+
+[[package]]
+name = "schema"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "sqlx",
+ "uuid",
 ]
 
 [[package]]
@@ -4563,7 +4572,7 @@ dependencies = [
 
 [[package]]
 name = "web_scraper"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "boa_engine",
  "env_logger",
@@ -4571,6 +4580,7 @@ dependencies = [
  "reqwest",
  "ron",
  "rstest",
+ "schema",
  "scraper",
  "serde",
  "serde_json",

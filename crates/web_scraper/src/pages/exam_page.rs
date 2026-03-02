@@ -1,4 +1,4 @@
-use crate::{error, schema};
+use crate::{ChapterFromJson, ExamFromJson, SubjectFromJson, error};
 
 pub fn extract(
     exam_page_metadata: &serde_json::Value,

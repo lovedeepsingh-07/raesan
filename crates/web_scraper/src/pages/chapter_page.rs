@@ -1,4 +1,4 @@
-use crate::{error, schema};
+use crate::{QuestionFromJson, error};
 
 pub fn extract(
     chapter_id: String,

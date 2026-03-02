@@ -1,0 +1,8 @@
+[package]
+name = "schema"
+edition = "2024"
+
+[dependencies]
+serde = { workspace = true }
+sqlx = { workspace = true }
+uuid = { workspace = true }
