@@ -8,7 +8,7 @@ pub struct T_Subject {
     pub exam_key: String,
     pub title: String,
     #[sqlx(skip)]
-    pub chapters: Vec<crate::T_Chapter>
+    pub chapters: Vec<crate::T_Chapter>,
 }
 
 impl From<&schema::Subject> for T_Subject {
