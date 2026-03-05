@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct QuestionOption {
     pub id: String,
     pub question_id: String,
@@ -8,7 +8,7 @@ pub struct QuestionOption {
     pub value: String,
 }
 
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Question {
     pub id: String,
     pub exam_key: String,
@@ -18,6 +18,7 @@ pub struct Question {
     pub chapter_group: String,
     pub question_type: crate::QuestionType,
     pub content: String,
+    #[sqlx(skip)]
     pub options: HashMap<String, QuestionOption>,
     pub answer: String,
 }

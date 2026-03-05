@@ -1,10 +1,6 @@
 use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
 use std::str::FromStr;
 
-pub const JEE_MAIN_URL: &str = "https://questions.examside.com/past-years/jee/jee-main";
-pub const NEET_URL: &str = "https://questions.examside.com/past-years/medical/neet";
-pub const JEE_ADVANCED_URL: &str = "https://questions.examside.com/past-years/jee/jee-advanced";
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::Builder::new()
@@ -24,61 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     drop(conn);
 
     let mut tx = pool.begin().await?;
-
-    let rows: Vec<schema::Subject> = sqlx::query_as::<_, schema::Subject>(
-        r#"SELECT
-            subject.id,
-            subject.key,
-            subject.exam_id,
-            exam.key as exam_key,
-            subject.title
-        FROM subject
-        JOIN exam on subject.exam_id = exam.id"#,
-    )
-    .fetch_all(&mut *tx)
-    .await
-    .unwrap();
-    for row in rows {
-        log::info!("{:#?}", row);
-    }
-
-    let rows: Vec<schema::Chapter> = sqlx::query_as::<_, schema::Chapter>(
-        r#"SELECT
-            chapter.id,
-            chapter.key,
-            exam.key as exam_key,
-            chapter.subject_id,
-            subject.key as subject_key,
-            chapter.title,
-            chapter."group" FROM chapter
-        JOIN subject on chapter.subject_id = subject.id
-        JOIN exam on subject.exam_id = exam.id"#,
-    )
-    .fetch_all(&mut *tx)
-    .await
-    .unwrap();
-    for row in rows {
-        log::info!("{:#?}", row);
-    }
-
-    let rows: Vec<schema::Chapter> = sqlx::query_as::<_, schema::Chapter>(
-        r#"SELECT
-            chapter.id,
-            chapter.key,
-            exam.key as exam_key,
-            chapter.subject_id,
-            subject.key as subject_key,
-            chapter.title,
-            chapter."group" FROM chapter
-        JOIN subject on chapter.subject_id = subject.id
-        JOIN exam on subject.exam_id = exam.id"#,
-    )
-    .fetch_all(&mut *tx)
-    .await
-    .unwrap();
-    for row in rows {
-        log::info!("{:#?}", row);
-    }
+    let ron_data: Vec<tree_schema::T_Exam> = ron::from_str(&std::fs::read_to_string("test.ron")?)?;
 
     tx.commit().await?;
 

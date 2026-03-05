@@ -1,4 +1,6 @@
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize, PartialEq)]
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize, PartialEq, sqlx::Type)]
+#[sqlx(type_name = "TEXT")]
+#[sqlx(rename_all = "snake_case")]
 pub enum QuestionType {
     #[default]
     MCQ,

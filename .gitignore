@@ -2,3 +2,4 @@ target
 build
 node_modules
 test.db
+test.ron
