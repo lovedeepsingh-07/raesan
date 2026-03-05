@@ -1,4 +1,4 @@
 #[derive(Debug)]
-pub(crate) enum Command {
-    API,
+pub enum Command {
+    Api,
 }

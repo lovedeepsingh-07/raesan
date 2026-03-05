@@ -1,16 +1,19 @@
 [package]
 name = "web_scraper"
-version = "0.1.0"
 edition = "2024"
 
 [dependencies]
 boa_engine = { workspace = true }
 env_logger = { workspace = true }
-error = { path = "../error" }
 log = { workspace = true }
 reqwest = { workspace = true }
 ron = { workspace = true }
+rstest = { workspace = true }
+schema = { path = "../schema" }
 scraper = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+sqlx = { workspace = true }
 tokio = { workspace = true }
+tree_schema = { path = "../tree_schema" }
+uuid = { workspace = true }

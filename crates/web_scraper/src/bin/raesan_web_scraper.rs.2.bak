@@ -1,0 +1,108 @@
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
+use std::str::FromStr;
+
+const EXAM_QUERY: &str = r#"SELECT * FROM exam"#;
+const SUBJECT_QUERY: &str = r#"SELECT
+    subject.id,
+    subject.key,
+    subject.exam_id,
+    exam.key as exam_key,
+    subject.title
+FROM subject
+INNER JOIN exam on subject.exam_id = exam.id
+WHERE subject.exam_id = $1"#;
+const CHAPTER_QUERY: &str = r#"SELECT
+    chapter.id,
+    chapter.key,
+    exam.key as exam_key,
+    chapter.subject_id,
+    subject.key as subject_key,
+    chapter.title,
+    chapter."group" FROM chapter
+INNER JOIN subject on chapter.subject_id = subject.id
+INNER JOIN exam on subject.exam_id = exam.id
+WHERE chapter.subject_id = $1"#;
+const QUESTION_QUERY: &str = r#"SELECT
+    question.id,
+    exam.key as exam_key,
+    subject.key as subject_key,
+    question.chapter_id,
+    chapter.key as chapter_key,
+    chapter."group" as chapter_group,
+    question.question_type,
+    question.content,
+    question.answer
+FROM question
+INNER JOIN chapter on question.chapter_id = chapter.id
+INNER JOIN subject on chapter.subject_id = subject.id
+INNER JOIN exam on subject.exam_id = exam.id
+WHERE question.chapter_id = $1"#;
+const QUESTION_OPTION_QUERY: &str = r#"SELECT
+    question_option.id,
+    question_option.question_id,
+    question_option.key,
+    question_option.value
+FROM question_option
+WHERE question_option.question_id = $1"#;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::Builder::new()
+        .filter_module("raesan_web_scraper", log::LevelFilter::Debug)
+        .filter_module("web_scraper", log::LevelFilter::Debug)
+        .filter_level(log::LevelFilter::Off)
+        .init();
+
+    let options = SqliteConnectOptions::from_str("sqlite://test.db")?.create_if_missing(true);
+    let pool = SqlitePoolOptions::new().connect_with(options).await?;
+
+    // Run migrations
+    let mut conn = pool.acquire().await?;
+    for migration in schema::get_migration_queries() {
+        sqlx::query(&migration).execute(&mut *conn).await?;
+    }
+    drop(conn);
+
+    let mut tx = pool.begin().await?;
+
+    let mut exam_rows: Vec<tree_schema::T_Exam> = sqlx::query_as::<_, tree_schema::T_Exam>(EXAM_QUERY).fetch_all(&mut *tx).await?;
+    for curr_exam in exam_rows.iter_mut() {
+        let mut subject_rows: Vec<tree_schema::T_Subject> = sqlx::query_as::<_, tree_schema::T_Subject>(SUBJECT_QUERY)
+            .bind(&curr_exam.id)
+            .fetch_all(&mut *tx)
+            .await
+            .unwrap();
+        for curr_subject in subject_rows.iter_mut() {
+            let mut chapter_rows: Vec<tree_schema::T_Chapter> = sqlx::query_as::<_, tree_schema::T_Chapter>(CHAPTER_QUERY)
+                .bind(&curr_subject.id)
+                .fetch_all(&mut *tx)
+                .await
+                .unwrap();
+            for curr_chapter in chapter_rows.iter_mut() {
+                let mut question_rows: Vec<schema::Question> = sqlx::query_as::<_, schema::Question>(QUESTION_QUERY)
+                    .bind(&curr_chapter.id)
+                    .fetch_all(&mut *tx)
+                    .await
+                    .unwrap();
+                for curr_question in question_rows.iter_mut() {
+                    let question_option_rows: Vec<schema::QuestionOption> = sqlx::query_as::<_, schema::QuestionOption>(QUESTION_OPTION_QUERY)
+                        .bind(&curr_question.id)
+                        .fetch_all(&mut *tx)
+                        .await
+                        .unwrap();
+                    curr_question.options = question_option_rows.into_iter().map(|item| (item.key.clone(), item)).collect();
+                }
+                curr_chapter.questions.extend(question_rows);
+            }
+            curr_subject.chapters.extend(chapter_rows);
+        }
+        curr_exam.subjects.extend(subject_rows);
+    }
+    std::fs::write("shit.ron", ron::ser::to_string_pretty(
+            &exam_rows, ron::ser::PrettyConfig::default()
+    )?)?;
+
+    tx.commit().await?;
+
+    Ok(())
+}

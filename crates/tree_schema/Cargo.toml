@@ -1,0 +1,9 @@
+[package]
+name = "tree_schema"
+edition = "2024"
+
+[dependencies]
+schema = { path = "../schema" }
+serde = { workspace = true }
+sqlx = { workspace = true }
+uuid = { workspace = true }
