@@ -1,13 +1,15 @@
 build:
-	@mkdir -p build/static
-	@bunx @tailwindcss/cli -i ./tailwind.css -o build/static/tailwind.css
-	@cargo build
-	@cp -r ./target/debug/raesan ./build/
-	@cp -r ./scripts/ ./build/static/
+	cargo tauri build
 
-[working-directory: "build"]
-run *args: build
-	@./raesan {{args}}
+run:
+	cargo tauri dev
+
+[working-directory: "frontend"]
+run-web:
+	bun run dev
+
+test:
+	cargo test -- --no-capture
 
 lint:
 	@cargo clippy -- \
@@ -18,5 +20,3 @@ fmt:
 	@alejandra .
 	@cargo fmt
 
-test:
-	cargo test -- --no-capture

@@ -1,7 +1,6 @@
 [workspace]
 resolver = "3"
 members = [
-  "./crates/frontend",
   "./crates/raesan",
   "./crates/web_scraper",
   "./crates/schema",
