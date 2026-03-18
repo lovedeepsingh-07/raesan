@@ -1,6 +1,7 @@
 [package]
 name = "raesan"
-edition = "2024"
+version = { workspace = true }
+edition = { workspace = true }
 
 [lib]
 name = "raesan_lib"

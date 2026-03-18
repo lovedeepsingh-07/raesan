@@ -10,6 +10,7 @@
 	>
 		<Button href="/" variant="link" class="p-0 text-3xl">raesan</Button>
 		<Button
+			class="hover:cursor-pointer"
 			onclick={() => {
 				toggleMode();
 			}}><Sun /></Button

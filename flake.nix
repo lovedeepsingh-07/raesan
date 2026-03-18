@@ -14,6 +14,10 @@
         pkgs = import inputs.nixpkgs {
           inherit system;
           overlays = [(import inputs.rust_overlay)];
+          config = {
+            allowUnfree = true;
+            android_sdk.accept_license = true;
+          };
         };
         rust_pkg = pkgs.rust-bin.stable."1.88.0".default;
       in {

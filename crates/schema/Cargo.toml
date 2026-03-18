@@ -1,6 +1,7 @@
 [package]
 name = "schema"
-edition = "2024"
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies]
 serde = { workspace = true }

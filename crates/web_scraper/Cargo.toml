@@ -1,6 +1,7 @@
 [package]
 name = "web_scraper"
-edition = "2024"
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies]
 boa_engine = { workspace = true }

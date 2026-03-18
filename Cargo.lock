@@ -3694,7 +3694,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "raesan"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "clap",
  "env_logger",
@@ -4186,7 +4186,7 @@ dependencies = [
 
 [[package]]
 name = "schema"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "serde",
  "sqlx",
@@ -5743,7 +5743,7 @@ dependencies = [
 
 [[package]]
 name = "tree_schema"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "schema",
  "serde",
@@ -6166,7 +6166,7 @@ dependencies = [
 
 [[package]]
 name = "web_scraper"
-version = "0.0.0"
+version = "0.1.0"
 dependencies = [
  "boa_engine",
  "env_logger",

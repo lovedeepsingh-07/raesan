@@ -7,5 +7,6 @@ fn main() {
         .filter_level(log::LevelFilter::Off)
         .write_style(env_logger::WriteStyle::Always)
         .init();
+
     raesan_lib::run()
 }

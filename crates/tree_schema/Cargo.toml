@@ -1,6 +1,7 @@
 [package]
 name = "tree_schema"
-edition = "2024"
+version = { workspace = true }
+edition = { workspace = true }
 
 [dependencies]
 schema = { path = "../schema" }
