@@ -1,4 +1,3 @@
-use crate::error;
 use reqwest as req;
 
 pub async fn extract(page_url: &str) -> Result<serde_json::Value, error::Error> {

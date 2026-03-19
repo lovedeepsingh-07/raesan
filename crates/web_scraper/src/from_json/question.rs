@@ -1,4 +1,4 @@
-use crate::{QuestionTypeFromJson, error};
+use crate::from_json::QuestionTypeFromJson;
 
 // JSON: {
 //   exam: String,

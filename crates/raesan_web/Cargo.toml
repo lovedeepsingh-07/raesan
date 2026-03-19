@@ -1,0 +1,13 @@
+[package]
+name = "raesan_web"
+version = { workspace = true }
+edition = { workspace = true }
+
+[dependencies]
+clap = { workspace = true }
+env_logger = { workspace = true }
+log = { workspace = true }
+raesan = { path = "../raesan" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }

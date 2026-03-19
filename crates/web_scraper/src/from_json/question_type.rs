@@ -1,4 +1,3 @@
-use crate::error;
 use std::collections::HashMap;
 
 impl crate::QuestionTypeFromJson for schema::QuestionType {

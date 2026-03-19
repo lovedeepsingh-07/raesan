@@ -1,5 +1,3 @@
-use crate::error;
-
 // JSON: { key: String, tite: String, examGroup: String }
 impl crate::ExamFromJson for schema::Exam {
     fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {

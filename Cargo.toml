@@ -1,8 +1,10 @@
 [workspace]
 resolver = "3"
 members = [
-  "./crates/frontend",
+  "./crates/error",
   "./crates/raesan",
+  "./crates/raesan_native",
+  "./crates/raesan_web",
   "./crates/web_scraper",
   "./crates/schema",
   "./crates/tree_schema",
@@ -10,9 +12,11 @@ members = [
 
 [workspace.package]
 version = "0.1.0"
+edition = "2024"
 
 [workspace.dependencies]
 boa_engine = "0.21.0"
+clap = { version = "4.5.54", features = ["derive"] }
 env_logger = "0.11.8"
 leptos = { version = "0.8.15", default-features = false, features = ["ssr"] }
 log = "0.4.29"
@@ -25,6 +29,8 @@ scraper = "0.25.0"
 serde = "1.0.228"
 serde_json = "1.0.149"
 sqlx = { version = "0.8.6", features = ["runtime-tokio", "sqlite"] }
+tauri = "2.10.3"
+tauri-plugin-opener = "2.5.3"
 tokio = { version = "1.49.0", features = ["full"] }
 uuid = { version = "1.21.0", features = ["v4"] }
 
