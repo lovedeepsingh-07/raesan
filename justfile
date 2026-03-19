@@ -4,9 +4,12 @@ build:
 run:
 	cargo tauri dev
 
-[working-directory: "frontend"]
-run-web:
-	bun run dev
+run_web:
+	cargo run -p raesan_web
+
+# [working-directory: "frontend"]
+# run-web:
+# 	bun run dev
 
 test:
 	cargo test -- --no-capture

@@ -1,4 +1,3 @@
-pub mod error;
 pub mod from_json;
 pub mod pages;
 pub mod utils;

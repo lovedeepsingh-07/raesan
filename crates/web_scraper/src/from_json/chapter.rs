@@ -1,5 +1,3 @@
-use crate::error;
-
 // JSON: {
 //   key: String,
 //   exam: String,

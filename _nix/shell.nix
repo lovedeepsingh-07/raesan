@@ -10,8 +10,8 @@
       pkgs.bun
       pkgs.pkg-config
       pkgs.jq
-	  pkgs.lld
-	  pkgs.clang
+      pkgs.lld
+      pkgs.clang
     ];
     buildInputs = [
       pkgs.sqlite
@@ -33,7 +33,7 @@
       pkgs.xdg-utils
     ];
     shellHook = ''
-            export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
+      export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
         pkgs.glib
         pkgs.gtk3
         pkgs.gdk-pixbuf
@@ -41,7 +41,7 @@
         pkgs.libsoup_3
         pkgs.webkitgtk_4_1
       ]}:$LD_LIBRARY_PATH"
-            zsh
+      zsh
     '';
   };
 }

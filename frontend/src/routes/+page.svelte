@@ -43,7 +43,11 @@
 				console.log("Something went right", output);
 			})
 			.catch((error) => {
-				console.error("Something went wrong", error);
+				if (error.kind == "NotFoundError") {
+					alert("cant cancel something that is not running");
+				} else {
+					console.error("Something went wrong", error);
+				}
 			});
 	};
 </script>
