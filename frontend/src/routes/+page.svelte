@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { invoke, isTauri } from "@tauri-apps/api/core";
+	import { begin_populate, cancel_populate } from "$lib/populate";
+	import { API_URL } from "$lib";
+	import { isTauri } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
 	import { Button } from "$lib/components/ui/button";
 
@@ -7,49 +9,18 @@
 		name: string;
 		data: string;
 	};
-
 	let events: StreamEvent[] = $state([]);
 
 	if (isTauri()) {
-		listen<StreamEvent>("some_event", (event) => {
+		listen<StreamEvent>("populate_event", (event) => {
 			events.push(event.payload);
 		});
+	} else {
+		const source = new EventSource(`${API_URL}/stream_populate`);
+		source.addEventListener("populate_event", (event) => {
+			console.log(event);
+		});
 	}
-
-	const handle_listen_click = () => {
-		if (!isTauri()) {
-			alert("listening without tauri backend");
-			return;
-		}
-		invoke("populate_database", { input_data: "This is from Svelte" })
-			.then((output) => {
-				console.log("Something went right", output);
-			})
-			.catch((error) => {
-				if (error.kind == "AlreadyRunningError") {
-					alert(error.message);
-				} else {
-					console.error("Something went wrong", error);
-				}
-			});
-	};
-	const handle_cancel_click = () => {
-		if (!isTauri()) {
-			alert("canceling without tauri backend");
-			return;
-		}
-		invoke("cancel_populate")
-			.then((output) => {
-				console.log("Something went right", output);
-			})
-			.catch((error) => {
-				if (error.kind == "NotFoundError") {
-					alert("cant cancel something that is not running");
-				} else {
-					console.error("Something went wrong", error);
-				}
-			});
-	};
 </script>
 
 <div class="mt-[20px] h-[1000px]">
@@ -61,10 +32,10 @@
 		class="w-fit hover:cursor-pointer"
 		variant="secondary">Test</Button
 	>
-	<Button onclick={handle_listen_click} class="w-fit hover:cursor-pointer" variant="secondary"
+	<Button onclick={begin_populate} class="w-fit hover:cursor-pointer" variant="secondary"
 		>Populate</Button
 	>
-	<Button onclick={handle_cancel_click} class="w-fit hover:cursor-pointer" variant="secondary"
+	<Button onclick={cancel_populate} class="w-fit hover:cursor-pointer" variant="secondary"
 		>Cancel</Button
 	>
 	{#each events as event}

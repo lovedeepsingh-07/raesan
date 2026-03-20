@@ -1,3 +1,7 @@
+export APP_ENV := "development"
+export FRONTEND_URL := "https://raesan.pages.dev"
+export API_URL := "http://localhost:8080"
+
 build:
 	cargo tauri build
 
@@ -7,9 +11,9 @@ run:
 run_web:
 	cargo run -p raesan_web
 
-# [working-directory: "frontend"]
-# run-web:
-# 	bun run dev
+[working-directory: "frontend"]
+run_frontend:
+	bun run dev
 
 test:
 	cargo test -- --no-capture

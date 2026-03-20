@@ -46,7 +46,7 @@ async fn populate_database(
     for i in 0..=10 {
         if *shutdown_rx.borrow() {
             app_handle.emit(
-                "some_event",
+                "populate_event",
                 serde_json::json!({
                     "name": "cancelled",
                     "data": "the process was cancelled",
@@ -54,7 +54,7 @@ async fn populate_database(
             )?;
         }
         app_handle.emit(
-            "some_event",
+            "populate_event",
             serde_json::json!({
                 "name": format!("event_{}", i),
                 "data": format!("The data that I got from js was: {}", input_data),
@@ -63,7 +63,7 @@ async fn populate_database(
         tokio::select! {
             _ = shutdown_rx.changed() => {
                 app_handle.emit(
-                    "some_event",
+                    "populate_event",
                     serde_json::json!({
                         "name": "cancelled",
                         "data": "the process was cancelled",
