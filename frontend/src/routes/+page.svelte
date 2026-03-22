@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { begin_populate, cancel_populate } from "$lib/populate";
-	import { API_URL } from "$lib";
 	import { isTauri } from "@tauri-apps/api/core";
 	import { listen } from "@tauri-apps/api/event";
 	import { Button } from "$lib/components/ui/button";
+	import { onMount } from "svelte";
+	import { PUBLIC_API_URL } from "$env/static/public";
 
 	type StreamEvent = {
 		name: string;
@@ -11,16 +12,17 @@
 	};
 	let events: StreamEvent[] = $state([]);
 
-	if (isTauri()) {
-		listen<StreamEvent>("populate_event", (event) => {
-			events.push(event.payload);
-		});
-	} else {
-		const source = new EventSource(`${API_URL}/stream_populate`);
-		source.addEventListener("populate_event", (event) => {
-			console.log(event);
-		});
-	}
+	let is_tauri = $state(false);
+	onMount(async () => {
+		is_tauri = isTauri();
+		if (is_tauri) {
+			listen<StreamEvent>("populate_event", (event) => {
+				events.push(event.payload);
+			});
+		}
+	});
+
+	let checking_health = $state(false);
 </script>
 
 <div class="mt-[20px] h-[1000px]">
@@ -32,13 +34,41 @@
 		class="w-fit hover:cursor-pointer"
 		variant="secondary">Test</Button
 	>
-	<Button onclick={begin_populate} class="w-fit hover:cursor-pointer" variant="secondary"
-		>Populate</Button
-	>
-	<Button onclick={cancel_populate} class="w-fit hover:cursor-pointer" variant="secondary"
-		>Cancel</Button
-	>
-	{#each events as event}
-		<p>{event.name} - {event.data}</p>
-	{/each}
+	{#if is_tauri}
+		<Button
+			onclick={async () => {
+				await begin_populate();
+			}}
+			class="w-fit hover:cursor-pointer"
+			variant="secondary">Populate</Button
+		>
+		<Button
+			onclick={async () => {
+				await cancel_populate();
+			}}
+			class="w-fit hover:cursor-pointer"
+			variant="secondary">Cancel</Button
+		>
+		{#each events as event}
+			<p>{event.name} - {event.data}</p>
+		{/each}
+	{:else}
+		<Button
+			onclick={async () => {
+				checking_health = true;
+				try {
+					const res = await fetch(`${PUBLIC_API_URL}/health`);
+					const data = await res.text();
+					alert(data);
+				} catch (error) {
+					console.error("something went wrong: ", error);
+				} finally {
+					checking_health = false;
+				}
+			}}
+			class="w-fit hover:cursor-pointer"
+			disabled={checking_health}
+			variant="secondary">{checking_health ? "checking" : "Health"}</Button
+		>
+	{/if}
 </div>

@@ -1,25 +1,10 @@
 pub mod constants;
 
-use axum::{
-    http,
-    response::{self, IntoResponse},
-    routing,
-};
-use tokio::sync::broadcast;
-use tokio_stream::StreamExt;
 use tower_http::cors;
-
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct PopulateEvent {
-    pub name: String,
-    pub data: String,
-}
+use axum::{http, response::IntoResponse, routing};
 
 #[derive(Debug, Clone)]
-pub struct ServerState {
-    pub app_env: Environment,
-    pub populate_event_tx: broadcast::Sender<PopulateEvent>,
-}
+pub struct ServerState { pub app_env: Environment }
 impl Default for ServerState {
     fn default() -> Self {
         Self::new()
@@ -27,7 +12,6 @@ impl Default for ServerState {
 }
 impl ServerState {
     pub fn new() -> Self {
-        let (populate_event_tx, _) = broadcast::channel::<PopulateEvent>(constants::EVENT_CAP);
         let app_env = match std::env::var("APP_ENV") {
             Ok(out) => match out.as_str() {
                 "production" => Environment::PROD,
@@ -40,7 +24,6 @@ impl ServerState {
         };
         Self {
             app_env,
-            populate_event_tx,
         }
     }
 }
@@ -51,42 +34,20 @@ pub enum Environment {
     PROD,
 }
 
-async fn begin_populate(
+// GET (/health)
+async fn health(
     axum::extract::State(server_state): axum::extract::State<ServerState>,
 ) -> impl IntoResponse {
-    let tx = server_state.populate_event_tx.clone();
-
-    tokio::spawn(async move {
-        for i in 0..10 {
-            let event = PopulateEvent {
-                name: format!("event_{}", i),
-                data: "this_is_some_data_from_backend".to_string(),
-            };
-            let _ = tx.send(event);
-            tokio::time::sleep(std::time::Duration::from_millis(1500)).await;
-        }
-    });
-
-    http::StatusCode::OK
-}
-async fn stream_populate(
-    axum::extract::State(server_state): axum::extract::State<ServerState>,
-) -> response::Sse<
-    impl futures::stream::Stream<Item = Result<response::sse::Event, std::convert::Infallible>>,
-> {
-    let rx = server_state.populate_event_tx.subscribe();
-
-    let stream = tokio_stream::wrappers::BroadcastStream::new(rx).filter_map(|event| match event {
-        Ok(data) => Some(Ok(response::sse::Event::default()
-            .event("populate_event")
-            .data(serde_json::to_string(&data).unwrap()))),
-        Err(_) => None,
-    });
-
-    response::Sse::new(stream).keep_alive(response::sse::KeepAlive::default())
-}
-async fn cancel_populate() -> impl IntoResponse {
-    String::from("cancel_populate")
+    match server_state.app_env {
+        Environment::PROD => {
+            String::from("HEALTHY")
+        },
+        Environment::DEV => {
+            // NOTE: simulating latency
+            tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+            String::from("HEALTHY")
+        },
+    }
 }
 
 #[tokio::main]
@@ -111,9 +72,7 @@ async fn main() {
     };
 
     let router = axum::Router::new()
-        .route("/begin_populate", routing::get(begin_populate))
-        .route("/stream_populate", routing::get(stream_populate))
-        .route("/cancel_populate", routing::get(cancel_populate))
+        .route("/health", routing::get(health))
         .with_state(server_state)
         .layer(cors);
 
