@@ -3,18 +3,23 @@
 	import MenuItem from "./menu_item.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Navbar } from "$components";
-	import { House, Database } from "@lucide/svelte";
-	import { PUBLIC_APP_PLATFORM } from "$env/static/public";
+	import { House, Notebook, Database } from "@lucide/svelte";
+	import { isTauri } from "@tauri-apps/api/core";
 
 	const items = [
 		{
 			title: "Home",
 			url: "/",
 			icon: House
+		},
+		{
+			title: "Practice Questions",
+			url: "/practice",
+			icon: Notebook
 		}
 	];
 
-	if (PUBLIC_APP_PLATFORM == "native") {
+	if (isTauri()) {
 		items.push({
 			title: "Database",
 			url: "/database",
@@ -28,7 +33,7 @@
 {#snippet SidebarGroup()}
 	<Sidebar.Group>
 		<Sidebar.GroupContent>
-			<Sidebar.Menu class="gap-[8px]">
+			<Sidebar.Menu class="gap-[10px]">
 				{#each items as item (item.title)}
 					<MenuItem {item} />
 				{/each}

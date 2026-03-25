@@ -1,7 +1,6 @@
-pub mod populate;
-
 use crate::state;
-use tokio::sync::RwLock;
+use axum::response::IntoResponse;
+use std::sync::Arc;
 
 const CHAPTER_QUERY: &str = r#"SELECT
     chapter.id,
@@ -14,14 +13,13 @@ const CHAPTER_QUERY: &str = r#"SELECT
 INNER JOIN subject on chapter.subject_id = subject.id
 INNER JOIN exam on subject.exam_id = exam.id"#;
 
-#[tauri::command(rename_all = "snake_case")]
+// GET (/api/metadata)
 pub async fn metadata(
-    app_state: tauri::State<'_, RwLock<state::AppState>>,
-) -> Result<String, error::Error> {
-    let app_state = app_state.read().await;
+    axum::extract::State(server_state): axum::extract::State<Arc<state::ServerState>>,
+) -> impl IntoResponse {
     let chapter_rows: Vec<schema::Chapter> = sqlx::query_as::<_, schema::Chapter>(CHAPTER_QUERY)
-        .fetch_all(&app_state.db_pool)
-        .await?;
-    tokio::time::sleep(std::time::Duration::from_secs(5)).await;
-    Ok(serde_json::to_string(&chapter_rows)?)
+        .fetch_all(&server_state.db_pool)
+        .await
+        .unwrap();
+    serde_json::to_string(&chapter_rows).unwrap()
 }

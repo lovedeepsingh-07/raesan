@@ -1,0 +1,25 @@
+GET http://localhost:8080/api/metadata HTTP/1.1
+
+###
+
+GET http://localhost:3000/api/users?name=john_doe&age=20 HTTP/1.1
+
+###
+
+GET http://localhost:3000/api/users/john_doe@69.com?name=john_doe&age=20 HTTP/1.1
+
+###
+
+POST http://localhost:3000/users HTTP/1.1
+Content-Type: application/json
+X-Custom-Header-One: some-value
+
+{
+  "password": "some_pass",
+  "foo": "bar",
+  "username": "other_user"
+}
+
+###
+
+GET http://localhost:3000/shit HTTP/1.1

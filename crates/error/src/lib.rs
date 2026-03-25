@@ -15,6 +15,7 @@ pub enum Error {
     BoaEngineError(String),
     TauriError(String),
     AlreadyRunningError(String),
+    DatabaseError(String),
 }
 impl std::error::Error for Error {}
 
@@ -34,6 +35,7 @@ impl Error {
             Error::DeserializeError(_) => "DeserializeError",
             Error::TauriError(_) => "TauriError",
             Error::AlreadyRunningError(_) => "AlreadyRunningError",
+            Error::DatabaseError(_) => "DatabaseError",
         }
     }
     pub fn message(&self) -> &str {
@@ -50,7 +52,8 @@ impl Error {
             | Error::MissingAnswerError(err_str)
             | Error::BoaEngineError(err_str)
             | Error::TauriError(err_str)
-            | Error::AlreadyRunningError(err_str) => err_str.as_str(),
+            | Error::AlreadyRunningError(err_str)
+            | Error::DatabaseError(err_str) => err_str.as_str(),
         }
     }
 }
@@ -70,6 +73,7 @@ impl std::fmt::Display for Error {
             Error::BoaEngineError(err_str) => write!(f, "BoaEngineError: {}", err_str),
             Error::TauriError(err_str) => write!(f, "TauriError: {}", err_str),
             Error::AlreadyRunningError(err_str) => write!(f, "AlreadyRunningError: {}", err_str),
+            Error::DatabaseError(err_str) => write!(f, "DatabaseError: {}", err_str),
         }
     }
 }
@@ -118,5 +122,11 @@ impl From<scraper::error::SelectorErrorKind<'_>> for Error {
 impl From<boa_engine::error::JsError> for Error {
     fn from(value: boa_engine::error::JsError) -> Self {
         Error::BoaEngineError(value.to_string())
+    }
+}
+#[cfg(feature = "sqlx")]
+impl From<sqlx::Error> for Error {
+    fn from(value: sqlx::Error) -> Self {
+        Error::DatabaseError(value.to_string())
     }
 }

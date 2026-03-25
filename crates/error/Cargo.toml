@@ -8,6 +8,7 @@ tauri = ["dep:tauri"]
 boa_engine = ["dep:boa_engine"]
 reqwest = ["dep:reqwest"]
 scraper = ["dep:scraper"]
+sqlx = ["dep:sqlx"]
 
 [dependencies]
 boa_engine = { workspace = true, optional = true }
@@ -15,4 +16,5 @@ reqwest = { workspace = true, optional = true }
 scraper = { workspace = true, optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+sqlx = { workspace = true, optional = true }
 tauri = { workspace = true, optional = true }

@@ -1,20 +1,22 @@
 pub mod commands;
+pub mod state;
 
-use commands::populate;
 use tauri::Manager;
 use tokio::sync::RwLock;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
-pub fn run() {
+pub async fn run() {
+    let app_state = state::AppState::new("../../test.db").await.unwrap();
     tauri::Builder::default()
         .setup(|app| {
-            app.manage(RwLock::new(raesan::AppState::new()));
+            app.manage(RwLock::new(app_state));
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            populate::populate_database,
-            populate::cancel_populate
+            commands::populate::populate_database,
+            commands::populate::cancel_populate,
+            commands::metadata
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

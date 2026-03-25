@@ -10,7 +10,7 @@
 </script>
 
 <div
-	class={`sticky top-0 right-0 left-0 z-[50] flex items-center ${is_mobile.current ? "justify-between" : "justify-end"} px-6 py-2`}
+	class={`sticky top-0 right-0 left-0 z-[50] flex items-center ${is_mobile.current ? "justify-between" : "justify-end"} px-4 py-2`}
 >
 	{#if is_mobile.current}
 		<Button
