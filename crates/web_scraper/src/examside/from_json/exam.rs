@@ -1,5 +1,5 @@
 // JSON: { key: String, tite: String, examGroup: String }
-impl crate::ExamFromJson for schema::Exam {
+impl crate::examside::ExamFromJson for schema::Exam {
     fn from_json(json: &serde_json::Value) -> Result<Self, error::Error> {
         let exam_key = json
             .get("key")
@@ -45,6 +45,7 @@ impl crate::ExamFromJson for schema::Exam {
             key: exam_key,
             title: exam_title,
             group: exam_group,
+            ..Default::default()
         })
     }
 }

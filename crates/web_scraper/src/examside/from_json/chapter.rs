@@ -5,7 +5,7 @@
 //   title: String,
 //   chapterGroup: String
 // }
-impl crate::ChapterFromJson for schema::Chapter {
+impl crate::examside::ChapterFromJson for schema::Chapter {
     fn from_json(subject_id: String, json: &serde_json::Value) -> Result<Self, error::Error> {
         let chapter_key = json
             .get("key")
@@ -81,6 +81,7 @@ impl crate::ChapterFromJson for schema::Chapter {
             subject_key,
             title: chapter_title,
             group: chapter_group,
+            ..Default::default()
         })
     }
 }

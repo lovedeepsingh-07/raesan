@@ -1,11 +1,9 @@
-use crate::{ChapterFromJson, ExamFromJson, SubjectFromJson};
+use crate::examside::{ChapterFromJson, ExamFromJson, SubjectFromJson};
 
 pub fn extract(
     exam_page_metadata: &serde_json::Value,
-) -> Result<(schema::Exam, Vec<schema::Subject>, Vec<schema::Chapter>), error::Error> {
-    let exam = schema::Exam::from_json(exam_page_metadata)?;
-    let mut subjects: Vec<schema::Subject> = Vec::new();
-    let mut chapters: Vec<schema::Chapter> = Vec::new();
+) -> Result<schema::Exam, error::Error> {
+    let mut exam = schema::Exam::from_json(exam_page_metadata)?;
 
     let subjects_array = exam_page_metadata
         .get("subjects")
@@ -20,7 +18,7 @@ pub fn extract(
         })?;
 
     for subject_json in subjects_array {
-        let subject = schema::Subject::from_json(exam.id.clone(), subject_json)?;
+        let mut subject = schema::Subject::from_json(exam.id.clone(), subject_json)?;
 
         let chapters_array = subject_json
             .get("chapters")
@@ -37,11 +35,11 @@ pub fn extract(
             })?;
         for chapter_json in chapters_array {
             let chapter = schema::Chapter::from_json(subject.id.clone(), chapter_json)?;
-            chapters.push(chapter);
+            subject.chapters.push(chapter);
         }
 
-        subjects.push(subject);
+        exam.subjects.push(subject);
     }
 
-    Ok((exam, subjects, chapters))
+    Ok(exam)
 }

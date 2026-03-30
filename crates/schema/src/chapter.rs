@@ -7,6 +7,8 @@ pub struct Chapter {
     pub subject_key: String,
     pub title: String,
     pub group: String,
+    #[sqlx(skip)]
+    pub questions: Vec<crate::Question>,
 }
 
 impl Chapter {

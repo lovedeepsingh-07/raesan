@@ -5,6 +5,8 @@ pub struct Subject {
     pub exam_id: String,
     pub exam_key: String,
     pub title: String,
+    #[sqlx(skip)]
+    pub chapters: Vec<crate::Chapter>
 }
 
 impl Subject {

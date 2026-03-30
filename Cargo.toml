@@ -7,7 +7,6 @@ members = [
   "./crates/raesan_web",
   "./crates/web_scraper",
   "./crates/schema",
-  "./crates/tree_schema",
 ]
 
 [workspace.package]

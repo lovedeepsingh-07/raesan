@@ -13,10 +13,10 @@ async fn main() {
             String::from("development")
         }
     };
-    let app = raesan::App::new("./test.db", raesan::Environment::from(app_env.as_str()))
+    let _ = raesan::App::new("./test.db", raesan::Environment::from(app_env.as_str()))
         .await
         .unwrap();
-    log::info!("{:#?}", app.get_exam_list().await.unwrap());
-    log::info!("{:#?}", app.get_subject_list().await.unwrap());
-    log::info!("{:#?}", app.get_chapter_list().await.unwrap());
+    // log::info!("{:#?}", app.get_exam_list().await.unwrap());
+    // log::info!("{:#?}", app.get_subject_list().await.unwrap());
+    // log::info!("{:#?}", app.get_chapter_list().await.unwrap());
 }

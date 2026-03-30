@@ -4,6 +4,8 @@ pub struct Exam {
     pub key: String,
     pub title: String,
     pub group: String,
+    #[sqlx(skip)]
+    pub subjects: Vec<crate::Subject>
 }
 
 impl Exam {

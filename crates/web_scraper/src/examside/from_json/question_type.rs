@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-impl crate::QuestionTypeFromJson for schema::QuestionType {
+impl crate::examside::QuestionTypeFromJson for schema::QuestionType {
     fn get_answer<'a>(&'a self, json: &'a serde_json::Value) -> Result<String, error::Error> {
         match self {
             schema::QuestionType::MCQ => {

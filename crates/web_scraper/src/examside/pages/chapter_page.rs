@@ -1,4 +1,4 @@
-use crate::QuestionFromJson;
+use crate::examside::QuestionFromJson;
 
 pub fn extract(
     chapter_id: String,

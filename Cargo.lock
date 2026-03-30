@@ -3790,7 +3790,6 @@ dependencies = [
  "log",
  "sqlx",
  "tokio",
- "tree_schema",
 ]
 
 [[package]]
@@ -5874,16 +5873,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "tree_schema"
-version = "0.1.0"
-dependencies = [
- "schema",
- "serde",
- "sqlx",
- "uuid",
-]
-
-[[package]]
 name = "try-lock"
 version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6313,7 +6302,6 @@ dependencies = [
  "serde_json",
  "sqlx",
  "tokio",
- "tree_schema",
  "uuid",
 ]
 

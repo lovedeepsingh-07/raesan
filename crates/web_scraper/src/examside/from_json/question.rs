@@ -1,4 +1,4 @@
-use crate::from_json::QuestionTypeFromJson;
+use crate::examside::from_json::QuestionTypeFromJson;
 
 // JSON: {
 //   exam: String,
@@ -14,7 +14,7 @@ use crate::from_json::QuestionTypeFromJson;
 //     }
 //   }
 // }
-impl crate::QuestionFromJson for schema::Question {
+impl crate::examside::QuestionFromJson for schema::Question {
     fn from_json(
         chapter_id: String,
         question_type: schema::QuestionType,
