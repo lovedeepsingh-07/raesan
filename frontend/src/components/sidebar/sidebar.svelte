@@ -1,10 +1,11 @@
 <script lang="ts">
-	import * as Sidebar from "$lib/components/ui/sidebar";
 	import MenuItem from "./menu_item.svelte";
-	import { Button } from "$lib/components/ui/button";
 	import { Navbar } from "$components";
 	import { House, Notebook, Database } from "@lucide/svelte";
 	import { isTauri } from "@tauri-apps/api/core";
+	import { IsMobile } from "$lib/hooks/is-mobile.svelte";
+	import { setContext } from "svelte";
+	import { fly, fade } from "svelte/transition";
 
 	const items = [
 		{
@@ -27,29 +28,54 @@
 		});
 	}
 
+	const is_mobile = new IsMobile();
+	const sidebar = $state({
+		open: false,
+		width_tcss: "w-[300px]",
+		width_num: 300
+	});
+	const is_sidebar_open = () => {
+		return sidebar.open;
+	};
+	const toggle_sidebar = () => {
+		sidebar.open = !sidebar.open;
+	};
+	setContext("sidebar", {
+		get open() {
+			return is_sidebar_open();
+		},
+		toggle: toggle_sidebar
+	});
+
 	let { children } = $props();
 </script>
 
-{#snippet SidebarGroup()}
-	<Sidebar.Group>
-		<Sidebar.GroupContent>
-			<Sidebar.Menu class="gap-[10px]">
-				{#each items as item (item.title)}
-					<MenuItem {item} />
-				{/each}
-			</Sidebar.Menu>
-		</Sidebar.GroupContent>
-	</Sidebar.Group>
-{/snippet}
-
-<Sidebar.Provider>
-	<Sidebar.Root class="max-w-[60%]">
-		<Sidebar.Header />
-		<Sidebar.Content>{@render SidebarGroup()}</Sidebar.Content>
-		<Sidebar.Footer />
-	</Sidebar.Root>
-	<main class="w-full">
+<div class="flex h-screen overflow-hidden">
+	{#if is_sidebar_open() && is_mobile}
+		<button
+			transition:fade={{ duration: 200 }}
+			onclick={toggle_sidebar}
+			class="fixed inset-0 z-[99] bg-black/40"
+			aria-label="sidebar-backdrop"
+		></button>
+	{/if}
+	{#if sidebar.open}
+		<div
+			transition:fly={{ x: -sidebar.width_num, duration: sidebar.width_num, opacity: 1 }}
+			class={`z-[100] ${sidebar.width_tcss} bg-sidebar ${is_mobile ? "fixed top-0 bottom-0 left-0" : ""}`}
+		>
+			{#if is_mobile}
+				<button onclick={toggle_sidebar}>close</button>
+			{/if}
+			{#each items as item (item.title)}
+				<MenuItem {item} />
+			{/each}
+		</div>
+	{/if}
+	<div class="w-full overflow-y-auto">
 		<Navbar />
-		{@render children()}
-	</main>
-</Sidebar.Provider>
+		<main>
+			{@render children()}
+		</main>
+	</div>
+</div>

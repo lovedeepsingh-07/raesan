@@ -23,3 +23,15 @@ impl From<&schema::Subject> for T_Subject {
         }
     }
 }
+
+impl T_Subject {
+    pub const LIST_QUERY: &str = r#"SELECT
+        subject.id,
+        subject.key,
+        subject.exam_id,
+        exam.key as exam_key,
+        subject.title
+    FROM subject
+    INNER JOIN exam on subject.exam_id = exam.id
+    WHERE subject.exam_id = $1"#;
+}

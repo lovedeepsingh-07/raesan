@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { begin_populate, cancel_populate } from "$lib/populate";
 	import { listen } from "@tauri-apps/api/event";
-	import { Button } from "$lib/components/ui/button";
+	// import { Button } from "$lib/components/ui/button";
 	import { onMount } from "svelte";
 	import { PUBLIC_API_URL } from "$env/static/public";
 
@@ -20,26 +20,26 @@
 
 <div class="mt-[20px] h-[1000px]">
 	<h1 class="text-2xl">Hello from Svelte!</h1>
-	<Button
+	<button
 		onclick={() => {
 			alert("Shit works");
 		}}
 		class="w-fit hover:cursor-pointer"
-		variant="secondary">Test</Button
+		>Test</button
 	>
-	<Button
+	<button
 		onclick={async () => {
 			await begin_populate();
 		}}
 		class="w-fit hover:cursor-pointer"
-		variant="secondary">Populate</Button
+		>Populate</Button
 	>
-	<Button
+	<button
 		onclick={async () => {
 			await cancel_populate();
 		}}
 		class="w-fit hover:cursor-pointer"
-		variant="secondary">Cancel</Button
+		>Cancel</button
 	>
 	{#each events as event}
 		<p>{event.name} - {event.data}</p>

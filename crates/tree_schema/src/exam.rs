@@ -21,3 +21,7 @@ impl From<&schema::Exam> for T_Exam {
         }
     }
 }
+
+impl T_Exam {
+    pub const LIST_QUERY: &str = "SELECT * FROM exam";
+}
