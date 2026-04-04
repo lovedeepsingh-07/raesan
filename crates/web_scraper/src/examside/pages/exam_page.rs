@@ -1,9 +1,11 @@
-use crate::examside::{ChapterFromJson, ExamFromJson, SubjectFromJson};
+use crate::examside;
 
-pub fn extract(
+pub async fn extract(
+    db_pool: &sqlx::Pool<sqlx::Sqlite>,
     exam_page_metadata: &serde_json::Value,
-) -> Result<schema::Exam, error::Error> {
-    let mut exam = schema::Exam::from_json(exam_page_metadata)?;
+) -> Result<(), error::Error> {
+    let exam_id = uuid::Uuid::new_v4().to_string();
+    examside::exam_from_json(db_pool, exam_page_metadata, &exam_id).await?;
 
     let subjects_array = exam_page_metadata
         .get("subjects")
@@ -18,28 +20,44 @@ pub fn extract(
         })?;
 
     for subject_json in subjects_array {
-        let mut subject = schema::Subject::from_json(exam.id.clone(), subject_json)?;
+        let subject_id = uuid::Uuid::new_v4().to_string();
+        examside::subject_from_json(db_pool, subject_json, &exam_id, &subject_id).await?;
 
-        let chapters_array = subject_json
-            .get("chapters")
+        let mut chapter_json_array: Vec<&serde_json::Value> = Vec::new();
+        let chapter_groups_array = subject_json
+            .get("chapterGroups")
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the exam[subjects][.][chapters] field".to_string(),
+                    "Failed to get the exam[subjects][.][chapterGroups] field".to_string(),
                 )
             })?
             .as_array()
             .ok_or_else(|| {
                 error::Error::DeserializeError(
-                    "Failed to get the exam[subjects][.][chapters] field as an array".to_string(),
+                    "Failed to get the exam[subjects][.][chapterGroups] field as an array".to_string(),
                 )
             })?;
-        for chapter_json in chapters_array {
-            let chapter = schema::Chapter::from_json(subject.id.clone(), chapter_json)?;
-            subject.chapters.push(chapter);
+        for curr_group in chapter_groups_array {
+            let chapters_array = curr_group
+                .get("chapters")
+                .ok_or_else(|| {
+                    error::Error::DeserializeError(
+                        "Failed to get the exam[subjects][.][chapterGroups][.][chapters] field".to_string(),
+                    )
+                })?
+                .as_array()
+                .ok_or_else(|| {
+                    error::Error::DeserializeError(
+                        "Failed to get the exam[subjects][.][chapterGroups][.][chapters] field as an array".to_string(),
+                    )
+                })?;
+            chapter_json_array.extend(chapters_array);
         }
-
-        exam.subjects.push(subject);
+        for chapter_json in chapter_json_array {
+            let chapter_id = uuid::Uuid::new_v4().to_string();
+            examside::chapter_from_json(db_pool, chapter_json, &subject_id, &chapter_id).await?;
+        }
     }
 
-    Ok(exam)
+    Ok(())
 }

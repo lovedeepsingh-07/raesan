@@ -1,4 +1,4 @@
-use crate::examside::from_json::QuestionTypeFromJson;
+use crate::examside;
 
 // JSON: {
 //   exam: String,
@@ -14,112 +14,103 @@ use crate::examside::from_json::QuestionTypeFromJson;
 //     }
 //   }
 // }
-impl crate::examside::QuestionFromJson for schema::Question {
-    fn from_json(
-        chapter_id: String,
-        question_type: schema::QuestionType,
-        json: &serde_json::Value,
-    ) -> Result<Self, error::Error> {
-        let exam_key = json
-            .get("exam")
-            .ok_or_else(|| {
-                error::Error::DeserializeError("Failed to get the question[exam] field".to_string())
-            })?
-            .as_str()
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[exam] field as a string".to_string(),
-                )
-            })?
-            .to_string();
-        let subject_key = json
-            .get("subject")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[subject] field".to_string(),
-                )
-            })?
-            .as_str()
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[subject] field as a string".to_string(),
-                )
-            })?
-            .to_string();
-        let chapter_key = json
-            .get("chapter")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[chapter] field".to_string(),
-                )
-            })?
-            .as_str()
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[chapter] field as a string".to_string(),
-                )
-            })?
-            .to_string();
-        let chapter_group = json
-            .get("chapterGroup")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[chapterGroup] field".to_string(),
-                )
-            })?
-            .as_str()
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[chapterGroup] field as a string".to_string(),
-                )
-            })?
-            .to_string();
+pub async fn from_json(
+    db_pool: &sqlx::Pool<sqlx::Sqlite>,
+    json: &serde_json::Value,
+    chapter_id: &str,
+    question_type: schema::QuestionType,
+) -> Result<(), error::Error> {
+    let question_id = uuid::Uuid::new_v4().to_string();
+    let question_body_data = json
+        .get("question")
+        .ok_or_else(|| {
+            error::Error::DeserializeError("Failed to get the question[question] field".to_string())
+        })?
+        .get("en")
+        .ok_or_else(|| {
+            error::Error::DeserializeError(
+                "Failed to get the question[question][en] field".to_string(),
+            )
+        })?;
+    let question_content = question_body_data
+        .get("content")
+        .ok_or_else(|| {
+            error::Error::DeserializeError(format!(
+                "Failed to get the question[question][en][content] field, {:#?}",
+                question_body_data
+            ))
+        })?
+        .as_str()
+        .ok_or_else(|| {
+            error::Error::DeserializeError(
+                "Failed to get the question[question][en][content] field as a string".to_string(),
+            )
+        })?
+        .to_string();
 
-        let question_body_data = json
-            .get("question")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[question] field".to_string(),
-                )
-            })?
-            .get("en")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[question][en] field".to_string(),
-                )
-            })?;
-        let question_content = question_body_data
-            .get("content")
-            .ok_or_else(|| {
-                error::Error::DeserializeError(format!(
-                    "Failed to get the question[question][en][content] field, {:#?}",
-                    question_body_data
-                ))
-            })?
-            .as_str()
-            .ok_or_else(|| {
-                error::Error::DeserializeError(
-                    "Failed to get the question[question][en][content] field as a string"
-                        .to_string(),
-                )
-            })?
-            .to_string();
+    let question_answer = get_answer(&question_type, question_body_data).await?;
+    sqlx::query(schema::Question::INSERT_QUERY)
+        .bind(&question_id)
+        .bind(&chapter_id)
+        .bind(&question_type)
+        .bind(&question_content)
+        .bind(&question_answer)
+        .execute(db_pool)
+        .await?;
 
-        let question_id = uuid::Uuid::new_v4().to_string();
-        let question_answer = question_type.get_answer(question_body_data)?;
-        let question_options =
-            question_type.get_options(question_id.clone(), question_body_data)?;
-        Ok(schema::Question {
-            id: question_id,
-            exam_key,
-            subject_key,
-            chapter_key,
-            chapter_id,
-            chapter_group,
-            question_type,
-            content: question_content,
-            options: question_options,
-            answer: question_answer,
-        })
+    examside::question_option_from_json(db_pool, question_body_data, &question_id, &question_type)
+        .await?;
+    Ok(())
+}
+
+pub async fn get_answer(
+    question_type: &schema::QuestionType,
+    json: &serde_json::Value,
+) -> Result<String, error::Error> {
+    match question_type {
+        schema::QuestionType::MCQ => {
+            let answer = json
+                .get("correct_options")
+                .ok_or_else(|| {
+                    error::Error::MissingAnswerError(
+                        "Failed to get the question[question][en][correct_options] field"
+                            .to_string(),
+                    )
+                })?
+                .get(0)
+                .ok_or_else(|| {
+                    error::Error::MissingAnswerError(
+                        "Failed to get the question[question][en][correct_options][0] element"
+                            .to_string(),
+                    )
+                })?
+                .as_str()
+                .ok_or_else(|| {
+                    error::Error::MissingAnswerError(
+                        "Failed to get the question[question][en][correct_options][0] as a string"
+                            .to_string(),
+                    )
+                })?
+                .to_string();
+            return Ok(answer);
+        }
+        schema::QuestionType::INTEGER => {
+            let answer = json
+                .get("answer")
+                .ok_or_else(|| {
+                    error::Error::DeserializeError(
+                        "Failed to get the question[question][en][answer] field".to_string(),
+                    )
+                })?
+                .as_str()
+                .ok_or_else(|| {
+                    error::Error::DeserializeError(
+                        "Failed to get the question[question][en][answer] field as a string"
+                            .to_string(),
+                    )
+                })?
+                .to_string();
+            return Ok(answer);
+        }
     }
 }

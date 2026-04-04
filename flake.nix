@@ -21,8 +21,8 @@
         };
         rust_pkg = pkgs.rust-bin.stable."1.88.0".default;
       in {
-        devShells = import ./_nix/shell.nix {inherit pkgs rust_pkg;};
-        packages = import ./_nix/pkg.nix {inherit pkgs rust_pkg;};
+        devShells = import ./.nix/shell.nix {inherit pkgs rust_pkg;};
+        packages = import ./.nix/pkg.nix {inherit pkgs rust_pkg;};
       }
     );
 }

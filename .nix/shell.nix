@@ -12,6 +12,7 @@
       pkgs.jq
       pkgs.lld
       pkgs.clang
+	  pkgs.sqlitebrowser
     ];
     buildInputs = [
       pkgs.sqlite

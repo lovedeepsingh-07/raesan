@@ -1,11 +1,10 @@
-use crate::examside::QuestionFromJson;
+use crate::examside;
 
-pub fn extract(
-    chapter_id: String,
+pub async fn extract(
+    db_pool: &sqlx::Pool<sqlx::Sqlite>,
     chapter_page_metadata: &serde_json::Value,
-) -> Result<Vec<schema::Question>, error::Error> {
-    let mut output: Vec<schema::Question> = Vec::new();
-
+    chapter_id: &str,
+) -> Result<(), error::Error> {
     let question_types_array = chapter_page_metadata
         .get("questions")
         .ok_or_else(|| {
@@ -54,20 +53,21 @@ pub fn extract(
             })?;
 
         for question_json in question_array {
-            let question = match schema::Question::from_json(
-                chapter_id.clone(),
-                schema::QuestionType::from(type_key),
+            match examside::question_from_json(
+                db_pool,
                 question_json,
-            ) {
-                Ok(out) => out,
+                chapter_id,
+                schema::QuestionType::from(type_key),
+            )
+            .await
+            {
+                Ok(_) => {}
                 Err(e) => {
                     log::warn!("Failed to deserialize question, {}", e);
                     continue;
                 }
             };
-            output.push(question);
         }
     }
-
-    Ok(output)
+    Ok(())
 }

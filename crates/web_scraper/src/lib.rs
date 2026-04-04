@@ -3,12 +3,8 @@ pub mod utils;
 
 pub use examside::ExamSide;
 
-#[derive(Debug)]
-pub enum AvailableScrapers {
-    ExamSide,
-}
-
 pub trait Scraper {
     const BASE_URL: &str;
-    fn scrape() -> impl Future<Output = Result<Vec<schema::Exam>, error::Error>>;
+    fn scrape(db_pool: &sqlx::Pool<sqlx::Sqlite>)
+    -> impl Future<Output = Result<(), error::Error>>;
 }
