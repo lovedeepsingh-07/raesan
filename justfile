@@ -11,7 +11,6 @@ run:
 run_web:
 	cargo run -p raesan_web
 
-[working-directory: "frontend"]
 run_frontend:
 	PUBLIC_APP_PLATFORM="web" bun run dev
 

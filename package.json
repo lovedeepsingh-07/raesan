@@ -1,0 +1,10 @@
+{
+  "name": "raesan",
+  "workspaces": [
+    "frontend",
+    "sdk"
+  ],
+  "scripts": {
+    "dev": "bun --filter @raesan/frontend dev"
+  }
+}

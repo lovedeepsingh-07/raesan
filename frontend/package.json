@@ -1,5 +1,5 @@
 {
-  "name": "raesan_frontend",
+  "name": "@raesan/frontend",
   "private": true,
   "version": "0.0.1",
   "type": "module",
@@ -43,6 +43,7 @@
     "@tauri-apps/api": "^2.10.1",
     "@tauri-apps/plugin-opener": "^2.5.3",
     "mode-watcher": "^1.1.0",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "@raesan/sdk": "workspace:*"
   }
 }

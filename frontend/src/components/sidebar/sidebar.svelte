@@ -30,7 +30,7 @@
 
 	const is_mobile = new IsMobile();
 	const sidebar = $state({
-		open: false,
+		open: !is_mobile.current,
 		width_tcss: "w-[300px]",
 		width_num: 300
 	});
@@ -46,12 +46,15 @@
 		},
 		toggle: toggle_sidebar
 	});
+	$effect(() => {
+		sidebar.open = !is_mobile.current;
+	});
 
 	let { children } = $props();
 </script>
 
 <div class="flex h-screen overflow-hidden">
-	{#if is_sidebar_open() && is_mobile}
+	{#if is_sidebar_open() && is_mobile.current}
 		<button
 			transition:fade={{ duration: 200 }}
 			onclick={toggle_sidebar}
@@ -62,9 +65,9 @@
 	{#if sidebar.open}
 		<div
 			transition:fly={{ x: -sidebar.width_num, duration: sidebar.width_num, opacity: 1 }}
-			class={`z-[100] ${sidebar.width_tcss} bg-sidebar ${is_mobile ? "fixed top-0 bottom-0 left-0" : ""}`}
+			class={`z-[100] ${sidebar.width_tcss} bg-sidebar ${is_mobile.current ? "fixed top-0 bottom-0 left-0" : ""}`}
 		>
-			{#if is_mobile}
+			{#if is_mobile.current}
 				<button onclick={toggle_sidebar}>close</button>
 			{/if}
 			{#each items as item (item.title)}

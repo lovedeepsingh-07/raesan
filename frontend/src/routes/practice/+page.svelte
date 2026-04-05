@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { fetch_metadata } from "$lib";
+	import { fetch_metadata } from "@raesan/sdk";
+	import { PUBLIC_API_URL } from "$env/static/public";
 
 	let fetching = $state(false);
 </script>
@@ -9,7 +10,7 @@
 	<button
 		onclick={async () => {
 			fetching = true;
-			await fetch_metadata();
+			await fetch_metadata(PUBLIC_API_URL);
 			fetching = false;
 		}}
 		disabled={fetching}>{fetching ? "fetching..." : "Fetch"}</button
