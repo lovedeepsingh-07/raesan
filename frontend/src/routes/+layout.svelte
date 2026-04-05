@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "./layout.css";
 	import { ModeWatcher } from "mode-watcher";
-	import { Navbar } from "$lib/components";
+	import { Sidebar } from "$components";
 
 	let { children } = $props();
 </script>
@@ -12,8 +12,9 @@
 </svelte:head>
 
 <ModeWatcher defaultMode={"dark"} />
-<Navbar />
 
-<div class="mx-auto w-full max-w-[78%]">
-	{@render children()}
-</div>
+<Sidebar>
+	<div class="mx-auto w-full max-w-[78%]">
+		{@render children()}
+	</div>
+</Sidebar>

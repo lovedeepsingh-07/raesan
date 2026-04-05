@@ -1,0 +1,96 @@
+###
+# ------ API testing ------
+
+GET http://localhost:8080/api/metadata HTTP/1.1
+
+###
+# ------ exams ------
+# 6895d3b6674eb4ec1c44bbe2
+# @curl-compressed
+GET https://web.getmarks.app/api/v4/dashboard HTTP/2
+Host: web.getmarks.app
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzJkZDM3ZWZiMDQyOWQ0ZDNkOWQ3YSIsImlhdCI6MTc3NDg1NzUxNiwiZXhwIjoxNzc3NDQ5NTE2fQ.V_jZSmGrR5ZaVbOGcgh-xGu0ZKhy33OEfTe5N4nZxG8
+Connection: keep-alive
+Referer: https://web.getmarks.app/
+Cookie: _ga_GZ1VLRLFJ1=GS2.1.s1774869139$o3$g1$t1774871562$j55$l0$h0; _ga=GA1.1.929317038.1774857504; _ga_K8Z8DZCWNG=GS2.1.s1774869139$o3$g1$t1774871562$j55$l0$h0; mp_76fe371aeb70394fd7ba86da4dd8ee8d_mixpanel=%7B%22distinct_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24device_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24search_engine%22%3A%20%22google%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%20%22www.google.com%22%2C%22userId%22%3A%20%226672dd37efb0429d4d3d9d7a%22%2C%22email%22%3A%20%22lovedeepbrar54155%40gmail.com%22%2C%22name%22%3A%20%22Lovedeep%22%2C%22targetYear%22%3A%20%222028%22%2C%22class%22%3A%20%22Class%2011%22%2C%22examCategory%22%3A%20%22615d3e0cc52ffa3c944600db%22%2C%22createdAt%22%3A%20%222024-06-19T13%3A29%3A27.054Z%22%2C%22lastLogin%22%3A%20%222026-03-30T07%3A58%3A37.271Z%22%2C%22lastUpdated%22%3A%20%222026-03-30T07%3A58%3A36.865Z%22%7D
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+DNT: 1
+Sec-GPC: 1
+TE: trailers
+
+###
+# ------ subjects ------
+# we have to make sure the "platform" query parameter is anything but "web"
+
+# @curl-compressed
+GET https://web.getmarks.app/api/v4/cpyqb/exam/615f0e999476412f48314daf?platform=not_web HTTP/2
+Host: web.getmarks.app
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzJkZDM3ZWZiMDQyOWQ0ZDNkOWQ3YSIsImlhdCI6MTc3NDg1NzUxNiwiZXhwIjoxNzc3NDQ5NTE2fQ.V_jZSmGrR5ZaVbOGcgh-xGu0ZKhy33OEfTe5N4nZxG8
+Connection: keep-alive
+Referer: https://web.getmarks.app/cpyqbV3/exam/615f0e999476412f48314daf
+Cookie: _ga_GZ1VLRLFJ1=GS2.1.s1774869139$o3$g1$t1774870409$j60$l0$h0; _ga=GA1.1.929317038.1774857504; _ga_K8Z8DZCWNG=GS2.1.s1774869139$o3$g1$t1774870409$j60$l0$h0; mp_76fe371aeb70394fd7ba86da4dd8ee8d_mixpanel=%7B%22distinct_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24device_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24search_engine%22%3A%20%22google%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%20%22www.google.com%22%2C%22userId%22%3A%20%226672dd37efb0429d4d3d9d7a%22%2C%22email%22%3A%20%22lovedeepbrar54155%40gmail.com%22%2C%22name%22%3A%20%22Lovedeep%22%2C%22targetYear%22%3A%20%222028%22%2C%22class%22%3A%20%22Class%2011%22%2C%22examCategory%22%3A%20%22615d3e0cc52ffa3c944600db%22%2C%22createdAt%22%3A%20%222024-06-19T13%3A29%3A27.054Z%22%2C%22lastLogin%22%3A%20%222026-03-30T07%3A58%3A37.271Z%22%2C%22lastUpdated%22%3A%20%222026-03-30T07%3A58%3A36.865Z%22%7D
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+DNT: 1
+Sec-GPC: 1
+If-None-Match: 11065619dbb5aa801c71491e2a40ec8c
+TE: trailers
+
+###
+# ------ chapters ------
+# we have to make sure the "platform" query parameter is anything but "web"
+# if we fon't provide a "limit" query parameter, it is assumed to be 25
+# we can edit the "offet" to get the all the variables without making it look suspicious
+
+# @curl-compressed
+GET https://web.getmarks.app/api/v4/cpyqb/exam/615f0e999476412f48314daf/subject/615f0c729476412f48314dab?platform=not_web&limit=10&offset=1 HTTP/2 Host: web.getmarks.app
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzJkZDM3ZWZiMDQyOWQ0ZDNkOWQ3YSIsImlhdCI6MTc3NDg1NzUxNiwiZXhwIjoxNzc3NDQ5NTE2fQ.V_jZSmGrR5ZaVbOGcgh-xGu0ZKhy33OEfTe5N4nZxG8
+Connection: keep-alive
+Referer: https://web.getmarks.app/cpyqbV3/exam/615f0e999476412f48314daf
+Cookie: _ga_GZ1VLRLFJ1=GS2.1.s1774869139$o3$g1$t1774869566$j51$l0$h0; _ga=GA1.1.929317038.1774857504; _ga_K8Z8DZCWNG=GS2.1.s1774869139$o3$g1$t1774869566$j51$l0$h0; mp_76fe371aeb70394fd7ba86da4dd8ee8d_mixpanel=%7B%22distinct_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24device_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24search_engine%22%3A%20%22google%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%20%22www.google.com%22%2C%22userId%22%3A%20%226672dd37efb0429d4d3d9d7a%22%2C%22email%22%3A%20%22lovedeepbrar54155%40gmail.com%22%2C%22name%22%3A%20%22Lovedeep%22%2C%22targetYear%22%3A%20%222028%22%2C%22class%22%3A%20%22Class%2011%22%2C%22examCategory%22%3A%20%22615d3e0cc52ffa3c944600db%22%2C%22createdAt%22%3A%20%222024-06-19T13%3A29%3A27.054Z%22%2C%22lastLogin%22%3A%20%222026-03-30T07%3A58%3A37.271Z%22%2C%22lastUpdated%22%3A%20%222026-03-30T07%3A58%3A36.865Z%22%7D
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+DNT: 1
+Sec-GPC: 1
+If-None-Match: a2eadb2311560c29c20289740610b1d0
+TE: trailers
+
+
+###
+# ------ questions ------
+# this just works, without any issue
+
+# @curl-compressed
+GET https://web.getmarks.app/api/v4/cpyqb/exam/615f0e999476412f48314daf/subject/615f0d109476412f48314dad/chapter/616025235af5c6f5cc45ff28/questions HTTP/2
+Host: web.getmarks.app
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:143.0) Gecko/20100101 Firefox/143.0
+Accept: application/json, text/plain, */*
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate, br, zstd
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NzJkZDM3ZWZiMDQyOWQ0ZDNkOWQ3YSIsImlhdCI6MTc3NDg1NzUxNiwiZXhwIjoxNzc3NDQ5NTE2fQ.V_jZSmGrR5ZaVbOGcgh-xGu0ZKhy33OEfTe5N4nZxG8
+Connection: keep-alive
+Referer: https://web.getmarks.app/cpyqbV3/exam/615f0e999476412f48314daf/615f0d109476412f48314dad/616025235af5c6f5cc45ff28/pyqs
+Cookie: _ga_GZ1VLRLFJ1=GS2.1.s1774859645$o2$g1$t1774859967$j60$l0$h0; _ga=GA1.1.929317038.1774857504; _ga_K8Z8DZCWNG=GS2.1.s1774859645$o2$g1$t1774859967$j60$l0$h0; mp_76fe371aeb70394fd7ba86da4dd8ee8d_mixpanel=%7B%22distinct_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24device_id%22%3A%20%2219d3dc0431e5a-070289a40051ca8-43320222-e1000-19d3dc0431fd98%22%2C%22%24search_engine%22%3A%20%22google%22%2C%22%24initial_referrer%22%3A%20%22https%3A%2F%2Fwww.google.com%2F%22%2C%22%24initial_referring_domain%22%3A%20%22www.google.com%22%2C%22userId%22%3A%20%226672dd37efb0429d4d3d9d7a%22%2C%22email%22%3A%20%22lovedeepbrar54155%40gmail.com%22%2C%22name%22%3A%20%22Lovedeep%22%2C%22targetYear%22%3A%20%222028%22%2C%22class%22%3A%20%22Class%2011%22%2C%22examCategory%22%3A%20%22615d3e0cc52ffa3c944600db%22%2C%22createdAt%22%3A%20%222024-06-19T13%3A29%3A27.054Z%22%2C%22lastLogin%22%3A%20%222026-03-30T07%3A58%3A37.271Z%22%2C%22lastUpdated%22%3A%20%222026-03-30T07%3A58%3A36.865Z%22%7D
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-origin
+DNT: 1
+Sec-GPC: 1
+If-None-Match: 35330f85d91bfa469e5df6cecae9e68f
+TE: trailers

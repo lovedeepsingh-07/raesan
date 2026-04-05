@@ -5,7 +5,12 @@ edition = { workspace = true }
 
 [dependencies]
 boa_engine = { workspace = true }
-error = { path = "../error", features = ["reqwest", "boa_engine", "scraper"] }
+error = { path = "../error", features = [
+  "reqwest",
+  "boa_engine",
+  "scraper",
+  "tokio",
+] }
 env_logger = { workspace = true }
 log = { workspace = true }
 reqwest = { workspace = true }
@@ -17,5 +22,4 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 sqlx = { workspace = true }
 tokio = { workspace = true }
-tree_schema = { path = "../tree_schema" }
 uuid = { workspace = true }

@@ -1,14 +1,7 @@
-use sqlx::sqlite::{SqliteConnectOptions, SqlitePoolOptions};
+use sqlx::sqlite;
 use std::str::FromStr;
-
-const EXAM_QUERY: &str = r#"INSERT INTO exam (id, key, title, "group") VALUES (?1, ?2, ?3, ?4)"#;
-const SUBJECT_QUERY: &str =
-    r#"INSERT INTO subject (id, key, exam_id, title) VALUES (?1, ?2, ?3, ?4)"#;
-const CHAPTER_QUERY: &str =
-    r#"INSERT INTO chapter (id, key, subject_id, title, "group") VALUES (?1, ?2, ?3, ?4, ?5)"#;
-const QUESTION_QUERY: &str = r#"INSERT INTO question (id, chapter_id, question_type, content, answer) VALUES (?1, ?2, ?3, ?4, ?5)"#;
-const QUESTION_OPTION_QUERY: &str =
-    r#"INSERT INTO question_option (id, question_id, key, value) VALUES (?1, ?2, ?3, ?4)"#;
+use tokio::sync::mpsc;
+use web_scraper::Scraper;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -18,68 +11,38 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .filter_level(log::LevelFilter::Off)
         .init();
 
-    let options = SqliteConnectOptions::from_str("sqlite://test.db")?.create_if_missing(true);
-    let pool = SqlitePoolOptions::new().connect_with(options).await?;
+    // create database connection
+    let db_options = sqlite::SqliteConnectOptions::from_str("./test.db")?.create_if_missing(true);
+    let db_pool = sqlite::SqlitePoolOptions::new()
+        .connect_with(db_options)
+        .await?;
 
-    // Run migrations
-    let mut conn = pool.acquire().await?;
+    // run migrations
     for migration in schema::get_migration_queries() {
-        sqlx::query(&migration).execute(&mut *conn).await?;
+        sqlx::query(&migration).execute(&db_pool).await?;
     }
-    drop(conn);
 
-    let mut tx = pool.begin().await?;
-    let ron_data: Vec<tree_schema::T_Exam> = ron::from_str(&std::fs::read_to_string("test.ron")?)?;
+    let (log_tx, mut log_rx) = mpsc::channel::<web_scraper::ScraperLog>(64);
+    let scraper_db_pool = db_pool.clone();
+    let scraper_handle = tokio::spawn(async move {
+        web_scraper::examside::ExamSide::scrape(&scraper_db_pool, log_tx).await
+    });
 
-    for curr_exam in ron_data {
-        sqlx::query(EXAM_QUERY)
-            .bind(curr_exam.id)
-            .bind(curr_exam.key)
-            .bind(curr_exam.title)
-            .bind(curr_exam.group)
-            .execute(&mut *tx)
-            .await?;
-        for curr_subject in curr_exam.subjects {
-            sqlx::query(SUBJECT_QUERY)
-                .bind(curr_subject.id)
-                .bind(curr_subject.key)
-                .bind(curr_subject.exam_id)
-                .bind(curr_subject.title)
-                .execute(&mut *tx)
-                .await?;
-            for curr_chapter in curr_subject.chapters {
-                sqlx::query(CHAPTER_QUERY)
-                    .bind(curr_chapter.id)
-                    .bind(curr_chapter.key)
-                    .bind(curr_chapter.subject_id)
-                    .bind(curr_chapter.title)
-                    .bind(curr_chapter.group)
-                    .execute(&mut *tx)
-                    .await?;
-                for curr_question in curr_chapter.questions {
-                    sqlx::query(QUESTION_QUERY)
-                        .bind(curr_question.id)
-                        .bind(curr_question.chapter_id)
-                        .bind(curr_question.question_type)
-                        .bind(curr_question.content)
-                        .bind(curr_question.answer)
-                        .execute(&mut *tx)
-                        .await?;
-                    for (_, curr_option) in curr_question.options {
-                        sqlx::query(QUESTION_OPTION_QUERY)
-                            .bind(curr_option.id)
-                            .bind(curr_option.question_id)
-                            .bind(curr_option.key)
-                            .bind(curr_option.value)
-                            .execute(&mut *tx)
-                            .await?;
-                    }
-                }
+    while let Some(scraper_log) = log_rx.recv().await {
+        match scraper_log {
+            web_scraper::ScraperLog::Info(msg) => {
+                log::info!("ScraperLog Info {}", msg);
+            }
+            web_scraper::ScraperLog::Warn(msg) => {
+                log::warn!("ScraperLog Warn {}", msg);
             }
         }
     }
 
-    tx.commit().await?;
+    match scraper_handle.await? {
+        Ok(_) => {}
+        Err(e) => log::error!("{}", e),
+    }
 
     Ok(())
 }

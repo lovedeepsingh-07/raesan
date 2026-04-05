@@ -1,6 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-fn main() {
+#[tokio::main]
+async fn main() {
     env_logger::Builder::new()
         .filter_module("raesan", log::LevelFilter::Debug)
         .filter_module("raesan_native", log::LevelFilter::Debug)
@@ -9,5 +10,5 @@ fn main() {
         .write_style(env_logger::WriteStyle::Always)
         .init();
 
-    raesan_native_lib::run()
+    raesan_native_lib::run().await
 }

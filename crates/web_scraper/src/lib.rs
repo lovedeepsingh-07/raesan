@@ -1,13 +1,20 @@
-pub mod from_json;
-pub mod pages;
+pub mod constants;
+pub mod examside;
 pub mod utils;
 
-pub use pages::chapter_page::extract as decode_chapter_page;
-pub use pages::exam_page::extract as decode_exam_page;
-pub use pages::metadata::extract as get_page_data;
+pub use examside::ExamSide;
+use tokio::sync::mpsc;
 
-pub use from_json::ChapterFromJson;
-pub use from_json::ExamFromJson;
-pub use from_json::QuestionFromJson;
-pub use from_json::QuestionTypeFromJson;
-pub use from_json::SubjectFromJson;
+#[derive(Debug, Clone)]
+pub enum ScraperLog {
+    Info(String),
+    Warn(String),
+}
+
+pub trait Scraper {
+    const BASE_URL: &str;
+    fn scrape(
+        db_pool: &sqlx::Pool<sqlx::Sqlite>,
+        log_tx: mpsc::Sender<ScraperLog>,
+    ) -> impl Future<Output = Result<(), error::Error>>;
+}

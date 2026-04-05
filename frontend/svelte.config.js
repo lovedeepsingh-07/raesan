@@ -9,7 +9,8 @@ const config = {
 			fallback: "index.html"
 		}),
 		alias: {
-			"@/*": "./path/to/lib/*"
+			"$components/*": "./src/components/*",
+			$components: "./src/components/index.ts"
 		}
 	}
 };
