@@ -3,15 +3,7 @@ use std::collections::HashMap;
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Question {
     pub id: String,
-    #[sqlx(skip)]
-    pub exam_key: String,
-    #[sqlx(skip)]
-    pub subject_key: String,
     pub chapter_id: String,
-    #[sqlx(skip)]
-    pub chapter_key: String,
-    #[sqlx(skip)]
-    pub chapter_group: String,
     pub question_type: crate::QuestionType,
     pub content: String,
     #[sqlx(skip)]

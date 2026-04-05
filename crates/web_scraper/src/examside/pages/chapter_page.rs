@@ -1,7 +1,9 @@
 use crate::examside;
+use tokio::sync::mpsc;
 
 pub async fn extract(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
+    log_tx: mpsc::Sender<crate::ScraperLog>,
     chapter_page_metadata: &serde_json::Value,
     chapter_id: &str,
 ) -> Result<(), error::Error> {
@@ -63,7 +65,15 @@ pub async fn extract(
             {
                 Ok(_) => {}
                 Err(e) => {
-                    log::warn!("Failed to deserialize question, {}", e);
+                    match e {
+                        examside::QuestionResult::Error(e) => {
+                            return Err(e);
+                        }
+                        examside::QuestionResult::MissingAnswer => {
+                            log_tx.send(crate::ScraperLog::Warn("Failed to deserialize question because of a missing answer, skipping entirely".to_string())).await?;
+                        }
+                        examside::QuestionResult::Filtered => {}
+                    };
                     continue;
                 }
             };

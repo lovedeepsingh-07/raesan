@@ -1,5 +1,17 @@
 use crate::examside;
 
+#[derive(Debug)]
+pub enum QuestionResult {
+    MissingAnswer,
+    Filtered,
+    Error(error::Error),
+}
+impl From<error::Error> for QuestionResult {
+    fn from(value: error::Error) -> Self {
+        QuestionResult::Error(value)
+    }
+}
+
 // JSON: {
 //   exam: String,
 //   subject: String,
@@ -19,7 +31,7 @@ pub async fn from_json(
     json: &serde_json::Value,
     chapter_id: &str,
     question_type: schema::QuestionType,
-) -> Result<(), error::Error> {
+) -> Result<schema::Question, QuestionResult> {
     let question_id = uuid::Uuid::new_v4().to_string();
     let question_body_data = json
         .get("question")
@@ -48,6 +60,15 @@ pub async fn from_json(
         })?
         .to_string();
 
+    // NOTE: I cannot host pictures right now, so it would be the best idea to only store
+    // non-picture based questions for now, hence we filter all the picture based questions
+    if question_content.contains("https")
+        || question_content.contains("jpg")
+        || question_content.contains("jpeg")
+    {
+        return Err(QuestionResult::Filtered);
+    }
+
     let question_answer = get_answer(&question_type, question_body_data).await?;
     sqlx::query(schema::Question::INSERT_QUERY)
         .bind(&question_id)
@@ -56,59 +77,49 @@ pub async fn from_json(
         .bind(&question_content)
         .bind(&question_answer)
         .execute(db_pool)
-        .await?;
+        .await
+        .map_err(|e| QuestionResult::Error(error::Error::from(e)))?;
 
-    examside::question_option_from_json(db_pool, question_body_data, &question_id, &question_type)
-        .await?;
-    Ok(())
+    let question_options = examside::question_option_from_json(
+        db_pool,
+        question_body_data,
+        &question_id,
+        &question_type,
+    )
+    .await
+    .map_err(|e| QuestionResult::Error(error::Error::from(e)))?;
+    Ok(schema::Question {
+        id: question_id,
+        chapter_id: chapter_id.to_string(),
+        question_type,
+        content: question_content,
+        options: question_options,
+        answer: question_answer,
+    })
 }
 
 pub async fn get_answer(
     question_type: &schema::QuestionType,
     json: &serde_json::Value,
-) -> Result<String, error::Error> {
+) -> Result<String, QuestionResult> {
     match question_type {
         schema::QuestionType::MCQ => {
             let answer = json
                 .get("correct_options")
-                .ok_or_else(|| {
-                    error::Error::MissingAnswerError(
-                        "Failed to get the question[question][en][correct_options] field"
-                            .to_string(),
-                    )
-                })?
+                .ok_or_else(|| QuestionResult::MissingAnswer)?
                 .get(0)
-                .ok_or_else(|| {
-                    error::Error::MissingAnswerError(
-                        "Failed to get the question[question][en][correct_options][0] element"
-                            .to_string(),
-                    )
-                })?
+                .ok_or_else(|| QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or_else(|| {
-                    error::Error::MissingAnswerError(
-                        "Failed to get the question[question][en][correct_options][0] as a string"
-                            .to_string(),
-                    )
-                })?
+                .ok_or_else(|| QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }
         schema::QuestionType::INTEGER => {
             let answer = json
                 .get("answer")
-                .ok_or_else(|| {
-                    error::Error::DeserializeError(
-                        "Failed to get the question[question][en][answer] field".to_string(),
-                    )
-                })?
+                .ok_or_else(|| QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or_else(|| {
-                    error::Error::DeserializeError(
-                        "Failed to get the question[question][en][answer] field as a string"
-                            .to_string(),
-                    )
-                })?
+                .ok_or_else(|| QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }

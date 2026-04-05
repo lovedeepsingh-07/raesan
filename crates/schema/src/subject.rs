@@ -1,11 +1,7 @@
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Subject {
     pub id: String,
-    #[sqlx(skip)]
-    pub key: String,
     pub exam_id: String,
-    #[sqlx(skip)]
-    pub exam_key: String,
     pub title: String,
     #[sqlx(skip)]
     pub chapters: Vec<crate::Chapter>,

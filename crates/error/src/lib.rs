@@ -1,6 +1,6 @@
 use serde::ser::SerializeStruct;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Error {
     NotFoundError(String),
     InvalidInputError(String),
@@ -11,11 +11,11 @@ pub enum Error {
     HtmlSelectorError(String),
     SerializeError(String),
     DeserializeError(String),
-    MissingAnswerError(String),
     BoaEngineError(String),
     TauriError(String),
     AlreadyRunningError(String),
     DatabaseError(String),
+    ChannelError(String),
 }
 impl std::error::Error for Error {}
 
@@ -30,12 +30,12 @@ impl Error {
             Error::ParseError(_) => "ParseError",
             Error::HtmlSelectorError(_) => "HtmlSelectorError",
             Error::SerializeError(_) => "SerializeError",
-            Error::MissingAnswerError(_) => "MissingAnswerError",
             Error::BoaEngineError(_) => "BoaEngineError",
             Error::DeserializeError(_) => "DeserializeError",
             Error::TauriError(_) => "TauriError",
             Error::AlreadyRunningError(_) => "AlreadyRunningError",
             Error::DatabaseError(_) => "DatabaseError",
+            Error::ChannelError(_) => "ChannelError",
         }
     }
     pub fn message(&self) -> &str {
@@ -49,11 +49,11 @@ impl Error {
             | Error::HtmlSelectorError(err_str)
             | Error::SerializeError(err_str)
             | Error::DeserializeError(err_str)
-            | Error::MissingAnswerError(err_str)
             | Error::BoaEngineError(err_str)
             | Error::TauriError(err_str)
             | Error::AlreadyRunningError(err_str)
-            | Error::DatabaseError(err_str) => err_str.as_str(),
+            | Error::DatabaseError(err_str)
+            | Error::ChannelError(err_str) => err_str.as_str(),
         }
     }
 }
@@ -69,11 +69,11 @@ impl std::fmt::Display for Error {
             Error::HtmlSelectorError(err_str) => write!(f, "HtmlSelectorError: {}", err_str),
             Error::SerializeError(err_str) => write!(f, "SerializeError: {}", err_str),
             Error::DeserializeError(err_str) => write!(f, "DeserializeError: {}", err_str),
-            Error::MissingAnswerError(err_str) => write!(f, "MissingAnswerError: {}", err_str),
             Error::BoaEngineError(err_str) => write!(f, "BoaEngineError: {}", err_str),
             Error::TauriError(err_str) => write!(f, "TauriError: {}", err_str),
             Error::AlreadyRunningError(err_str) => write!(f, "AlreadyRunningError: {}", err_str),
             Error::DatabaseError(err_str) => write!(f, "DatabaseError: {}", err_str),
+            Error::ChannelError(err_str) => write!(f, "ChannelError: {}", err_str),
         }
     }
 }
@@ -128,5 +128,11 @@ impl From<boa_engine::error::JsError> for Error {
 impl From<sqlx::Error> for Error {
     fn from(value: sqlx::Error) -> Self {
         Error::DatabaseError(value.to_string())
+    }
+}
+#[cfg(feature = "tokio")]
+impl<T> From<tokio::sync::mpsc::error::SendError<T>> for Error {
+    fn from(value: tokio::sync::mpsc::error::SendError<T>) -> Self {
+        Error::ChannelError(value.to_string())
     }
 }

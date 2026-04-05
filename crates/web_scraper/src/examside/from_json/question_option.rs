@@ -1,11 +1,15 @@
+use std::collections::HashMap;
+
 pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     json: &serde_json::Value,
     question_id: &str,
     question_type: &schema::QuestionType,
-) -> Result<(), error::Error> {
+) -> Result<HashMap<String, schema::QuestionOption>, error::Error> {
+    let mut output = HashMap::new();
+
     if *question_type != schema::QuestionType::MCQ {
-        return Ok(());
+        return Ok(output);
     }
 
     let options_array = json
@@ -52,6 +56,7 @@ pub async fn from_json(
                 )
             })?
             .to_string();
+
         sqlx::query(schema::QuestionOption::INSERT_QUERY)
             .bind(&question_option_id)
             .bind(&question_id)
@@ -59,7 +64,17 @@ pub async fn from_json(
             .bind(&option_value)
             .execute(db_pool)
             .await?;
+
+        output.insert(
+            option_key.clone(),
+            schema::QuestionOption {
+                id: question_option_id,
+                question_id: question_id.to_string(),
+                key: option_key,
+                value: option_value,
+            },
+        );
     }
 
-    Ok(())
+    Ok(output)
 }

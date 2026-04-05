@@ -2,8 +2,8 @@
 pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     json: &serde_json::Value,
-    exam_id: &str,
-) -> Result<(), error::Error> {
+) -> Result<schema::Exam, error::Error> {
+    let exam_id = uuid::Uuid::new_v4().to_string();
     let exam_key = json
         .get("key")
         .ok_or_else(|| {
@@ -28,6 +28,7 @@ pub async fn from_json(
             )
         })?
         .to_string();
+
     sqlx::query(schema::Exam::INSERT_QUERY)
         .bind(&exam_id)
         .bind(&exam_title)
@@ -40,5 +41,10 @@ pub async fn from_json(
         .bind(&exam_key)
         .execute(db_pool)
         .await?;
-    Ok(())
+
+    Ok(schema::Exam {
+        id: exam_id.to_string(),
+        title: exam_title,
+        ..Default::default()
+    })
 }

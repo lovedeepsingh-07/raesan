@@ -1,5 +1,6 @@
 use sqlx::sqlite;
 use std::str::FromStr;
+use tokio::sync::mpsc;
 use web_scraper::Scraper;
 
 #[tokio::main]
@@ -11,8 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     // create database connection
-    let db_options =
-        sqlite::SqliteConnectOptions::from_str("./test.db")?.create_if_missing(true);
+    let db_options = sqlite::SqliteConnectOptions::from_str("./test.db")?.create_if_missing(true);
     let db_pool = sqlite::SqlitePoolOptions::new()
         .connect_with(db_options)
         .await?;
@@ -22,12 +22,27 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         sqlx::query(&migration).execute(&db_pool).await?;
     }
 
-    match web_scraper::examside::ExamSide::scrape(&db_pool).await {
-        Ok(_) => {},
-        Err(e) => {
-            log::error!("{}", e);
+    let (log_tx, mut log_rx) = mpsc::channel::<web_scraper::ScraperLog>(64);
+    let scraper_db_pool = db_pool.clone();
+    let scraper_handle = tokio::spawn(async move {
+        web_scraper::examside::ExamSide::scrape(&scraper_db_pool, log_tx).await
+    });
+
+    while let Some(scraper_log) = log_rx.recv().await {
+        match scraper_log {
+            web_scraper::ScraperLog::Info(msg) => {
+                log::info!("ScraperLog Info {}", msg);
+            }
+            web_scraper::ScraperLog::Warn(msg) => {
+                log::warn!("ScraperLog Warn {}", msg);
+            }
         }
-    };
+    }
+
+    match scraper_handle.await? {
+        Ok(_) => {}
+        Err(e) => log::error!("{}", e),
+    }
 
     Ok(())
 }

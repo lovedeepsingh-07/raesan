@@ -1,16 +1,8 @@
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Chapter {
     pub id: String,
-    #[sqlx(skip)]
-    pub key: String,
-    #[sqlx(skip)]
-    pub exam_key: String,
     pub subject_id: String,
-    #[sqlx(skip)]
-    pub subject_key: String,
     pub title: String,
-    #[sqlx(skip)]
-    pub group: String,
     #[sqlx(skip)]
     pub questions: Vec<crate::Question>,
 }

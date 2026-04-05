@@ -9,8 +9,8 @@ pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     json: &serde_json::Value,
     subject_id: &str,
-    chapter_id: &str,
-) -> Result<(), error::Error> {
+) -> Result<schema::Chapter, error::Error> {
+    let chapter_id = uuid::Uuid::new_v4().to_string();
     let chapter_key = json
         .get("key")
         .ok_or_else(|| {
@@ -48,5 +48,11 @@ pub async fn from_json(
         .bind(&chapter_key)
         .execute(db_pool)
         .await?;
-    Ok(())
+
+    Ok(schema::Chapter {
+        id: chapter_id,
+        subject_id: subject_id.to_string(),
+        title: chapter_title.to_string(),
+        ..Default::default()
+    })
 }
