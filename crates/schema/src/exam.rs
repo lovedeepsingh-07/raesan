@@ -12,5 +12,4 @@ impl Exam {
         title TEXT NOT NULL
     )"#;
     pub const INSERT_QUERY: &str = "INSERT INTO exam (id, title) VALUES (?1, ?2)";
-    pub const LIST_QUERY: &str = "SELECT * FROM exam";
 }

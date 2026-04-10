@@ -9,6 +9,7 @@ error = { path = "../error", default-features = false, features = ["sqlx"] }
 # serde = { workspace = true }
 # serde_json = { workspace = true }
 log = { workspace = true }
+schema = { path = "../schema" }
 sqlx = { workspace = true }
 tokio = { workspace = true }
 # web_scraper = { path = "../web_scraper" }

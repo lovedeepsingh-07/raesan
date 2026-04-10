@@ -20,9 +20,9 @@ async fn main() {
         std::env::var("FRONTEND_URL").unwrap_or_else(|_| "https://raesan.pages.dev".to_string());
 
     let server_state = Arc::new(state::ServerState::new("./test.db").await.unwrap());
-    let cors = match server_state.app_env {
-        state::Environment::DEV => cors::CorsLayer::permissive(),
-        state::Environment::PROD => cors::CorsLayer::new()
+    let cors = match server_state.app.env {
+        raesan::Environment::DEV => cors::CorsLayer::permissive(),
+        raesan::Environment::PROD => cors::CorsLayer::new()
             .allow_origin(frontend_url.parse::<http::HeaderValue>().unwrap())
             .allow_methods([http::Method::GET, http::Method::POST])
             .allow_headers(cors::Any),

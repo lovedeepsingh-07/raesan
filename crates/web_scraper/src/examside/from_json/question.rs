@@ -72,7 +72,7 @@ pub async fn from_json(
     let question_answer = get_answer(&question_type, question_body_data).await?;
     sqlx::query(schema::Question::INSERT_QUERY)
         .bind(&question_id)
-        .bind(&chapter_id)
+        .bind(chapter_id)
         .bind(&question_type)
         .bind(&question_content)
         .bind(&question_answer)
@@ -87,7 +87,7 @@ pub async fn from_json(
         &question_type,
     )
     .await
-    .map_err(|e| QuestionResult::Error(error::Error::from(e)))?;
+    .map_err(QuestionResult::Error)?;
     Ok(schema::Question {
         id: question_id,
         chapter_id: chapter_id.to_string(),
@@ -106,20 +106,20 @@ pub async fn get_answer(
         schema::QuestionType::MCQ => {
             let answer = json
                 .get("correct_options")
-                .ok_or_else(|| QuestionResult::MissingAnswer)?
+                .ok_or(QuestionResult::MissingAnswer)?
                 .get(0)
-                .ok_or_else(|| QuestionResult::MissingAnswer)?
+                .ok_or(QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or_else(|| QuestionResult::MissingAnswer)?
+                .ok_or(QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }
         schema::QuestionType::INTEGER => {
             let answer = json
                 .get("answer")
-                .ok_or_else(|| QuestionResult::MissingAnswer)?
+                .ok_or(QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or_else(|| QuestionResult::MissingAnswer)?
+                .ok_or(QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }

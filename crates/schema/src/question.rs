@@ -21,5 +21,4 @@ impl Question {
             FOREIGN KEY (chapter_id) REFERENCES chapter(id) ON DELETE CASCADE
         )"#;
     pub const INSERT_QUERY: &str = "INSERT INTO question (id, chapter_id, question_type, content, answer) VALUES (?1, ?2, ?3, ?4, ?5)";
-    pub const LIST_QUERY: &str = "SELECT * FROM question";
 }

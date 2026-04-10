@@ -1,8 +1,7 @@
 <script lang="ts">
 	import MenuItem from "./menu_item.svelte";
 	import { Navbar } from "$components";
-	import { House, Notebook, Database } from "@lucide/svelte";
-	import { isTauri } from "@tauri-apps/api/core";
+	import { House, Notebook, CirclePlus } from "@lucide/svelte";
 	import { IsMobile } from "$lib/hooks/is-mobile.svelte";
 	import { setContext } from "svelte";
 	import { fly, fade } from "svelte/transition";
@@ -15,18 +14,15 @@
 		},
 		{
 			title: "Practice Questions",
-			url: "/practice",
+			url: "/practice_questions",
 			icon: Notebook
+		},
+		{
+			title: "Create Test",
+			url: "/create_test",
+			icon: CirclePlus
 		}
 	];
-
-	if (isTauri()) {
-		items.push({
-			title: "Database",
-			url: "/database",
-			icon: Database
-		});
-	}
 
 	const is_mobile = new IsMobile();
 	const sidebar = $state({

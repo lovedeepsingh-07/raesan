@@ -19,7 +19,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // run migrations
     for migration in schema::get_migration_queries() {
-        sqlx::query(&migration).execute(&db_pool).await?;
+        sqlx::query(migration).execute(&db_pool).await?;
     }
 
     let (log_tx, mut log_rx) = mpsc::channel::<web_scraper::ScraperLog>(64);

@@ -16,5 +16,4 @@ impl Chapter {
     )"#;
     pub const INSERT_QUERY: &str =
         "INSERT INTO chapter (id, subject_id, title) VALUES (?1, ?2, ?3)";
-    pub const LIST_QUERY: &str = "SELECT * FROM chapter";
 }

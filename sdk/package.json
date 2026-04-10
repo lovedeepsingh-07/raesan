@@ -4,8 +4,7 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./models": "./src/models.ts",
-    "./populate": "./src/populate.ts"
+    "./models": "./src/models.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -32,7 +32,7 @@ pub async fn from_json(
 
     sqlx::query(schema::Subject::INSERT_QUERY)
         .bind(&subject_id)
-        .bind(&exam_id)
+        .bind(exam_id)
         .bind(&subject_title)
         .execute(db_pool)
         .await?;

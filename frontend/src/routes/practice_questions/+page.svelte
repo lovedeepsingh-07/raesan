@@ -6,7 +6,7 @@
 </script>
 
 <div class="h-[1000px]">
-	<h1 class="text-2xl">Questions Page</h1>
+	<h1 class="text-2xl">Practice Questions Page</h1>
 	<button
 		onclick={async () => {
 			fetching = true;

@@ -59,7 +59,7 @@ pub async fn from_json(
 
         sqlx::query(schema::QuestionOption::INSERT_QUERY)
             .bind(&question_option_id)
-            .bind(&question_id)
+            .bind(question_id)
             .bind(&option_key)
             .bind(&option_value)
             .execute(db_pool)

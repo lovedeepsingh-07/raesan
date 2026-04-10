@@ -15,5 +15,4 @@ impl Subject {
         FOREIGN KEY (exam_id) REFERENCES exam(id) ON DELETE CASCADE
     )"#;
     pub const INSERT_QUERY: &str = "INSERT INTO subject (id, exam_id, title) VALUES (?1, ?2, ?3)";
-    pub const LIST_QUERY: &str = "SELECT * FROM subject";
 }
