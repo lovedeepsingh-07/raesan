@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct ServerState {
-    pub app: raesan::App
+    pub app: raesan::App,
 }
 
 impl ServerState {
@@ -12,8 +12,7 @@ impl ServerState {
                 String::from("development")
             }
         };
-        let app = raesan::App::new(db_path, raesan::Environment::from(app_env.as_str()))
-            .await?;
+        let app = raesan::App::new(db_path, raesan::Environment::from(app_env.as_str())).await?;
 
         Ok(Self { app })
     }

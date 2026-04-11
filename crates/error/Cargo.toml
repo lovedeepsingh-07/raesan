@@ -4,6 +4,7 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [features]
+axum = ["dep:axum"]
 tauri = ["dep:tauri"]
 boa_engine = ["dep:boa_engine"]
 reqwest = ["dep:reqwest"]
@@ -12,6 +13,7 @@ sqlx = ["dep:sqlx"]
 tokio = ["dep:tokio"]
 
 [dependencies]
+axum = { workspace = true, optional = true }
 boa_engine = { workspace = true, optional = true }
 reqwest = { workspace = true, optional = true }
 scraper = { workspace = true, optional = true }

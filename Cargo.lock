@@ -1416,6 +1416,7 @@ dependencies = [
 name = "error"
 version = "0.1.0"
 dependencies = [
+ "axum",
  "boa_engine",
  "reqwest",
  "scraper",

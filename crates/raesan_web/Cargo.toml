@@ -6,7 +6,7 @@ edition = { workspace = true }
 [dependencies]
 axum = { workspace = true, features = ["macros"] }
 env_logger = { workspace = true }
-error = { path = "../error", features = ["sqlx"] }
+error = { path = "../error", features = ["sqlx", "axum"] }
 log = { workspace = true }
 raesan = { path = "../raesan" }
 schema = { path = "../schema" }

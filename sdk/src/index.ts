@@ -1,20 +1,16 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 
-export const fetch_metadata = async (API_URL: string) => {
+export const fetch_filter_metadata = async (server_utils?, API_URL: string) => {
 	if (isTauri()) {
-		try {
-			const res = await invoke("metadata");
-			console.log(res);
-		} catch (err) {
-			console.error("Something went wrong on the native side", err);
-		}
+		const res = await invoke("fetch_filter_metadata");
+		return res;
 	} else {
-		try {
-			const res = await fetch(`${API_URL}/api/metadata`, { method: "GET" });
-			const data = await res.json();
-			console.log(data);
-		} catch (err) {
-			console.error("Something went wrong on the web side", err);
+		const res = server_utils
+			? await server_utils.fetch(`${API_URL}/api/filter_metadata`, { method: "GET" })
+			: await fetch(`${API_URL}/api/filter_metadata`, { method: "GET" });
+		if (!res.ok) {
+			throw new Error(`HTTP error: ${res.status}`);
 		}
+		return await res.json();
 	}
 };

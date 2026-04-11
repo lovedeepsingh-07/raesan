@@ -22,6 +22,6 @@ pub fn get_migration_queries() -> Vec<&'static str> {
         Chapter::MIGRATION_QUERY,
         Question::MIGRATION_QUERY,
         QuestionOption::MIGRATION_QUERY,
-        SourceRecord::MIGRATION_QUERY
+        SourceRecord::MIGRATION_QUERY,
     ]
 }

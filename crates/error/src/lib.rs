@@ -136,3 +136,9 @@ impl<T> From<tokio::sync::mpsc::error::SendError<T>> for Error {
         Error::ChannelError(value.to_string())
     }
 }
+#[cfg(feature = "axum")]
+impl From<axum::http::header::InvalidHeaderValue> for Error {
+    fn from(value: axum::http::header::InvalidHeaderValue) -> Self {
+        Error::InvalidInputError(value.to_string())
+    }
+}

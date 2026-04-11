@@ -71,7 +71,7 @@
 			{/each}
 		</div>
 	{/if}
-	<div class="w-full overflow-y-auto">
+	<div class="relative w-full overflow-y-auto">
 		<Navbar />
 		<main>
 			{@render children()}
