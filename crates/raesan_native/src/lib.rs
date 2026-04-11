@@ -14,9 +14,7 @@ pub async fn run() {
         })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
-            commands::populate::populate_database,
-            commands::populate::cancel_populate,
-            commands::metadata
+            commands::filter_metadata
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

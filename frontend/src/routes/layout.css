@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* custom configuration */
+@theme {
+	--breakpoint-xs: 30rem;
+}
+
+/* theme */
 @custom-variant dark (&:is(.dark *));
 
 :root {

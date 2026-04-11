@@ -15,6 +15,7 @@ clap = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
 error = { path = "../error", features = ["tauri", "sqlx"] }
+raesan = { path = "../raesan" }
 schema = { path = "../schema" }
 serde = { workspace = true }
 serde_json = { workspace = true }

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import "./layout.css";
+	import { Navbar } from "$components";
 	import { ModeWatcher } from "mode-watcher";
-	import { Sidebar } from "$components";
 
 	let { children } = $props();
 </script>
@@ -13,8 +13,7 @@
 
 <ModeWatcher defaultMode={"dark"} />
 
-<Sidebar>
-	<div class="mx-auto w-full max-w-[78%]">
-		{@render children()}
-	</div>
-</Sidebar>
+<Navbar />
+<div class="mx-auto w-full max-w-[78%]">
+	{@render children()}
+</div>
