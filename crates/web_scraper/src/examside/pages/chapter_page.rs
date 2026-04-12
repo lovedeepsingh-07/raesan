@@ -7,6 +7,10 @@ pub async fn extract(
     chapter_page_metadata: &serde_json::Value,
     chapter_id: &str,
 ) -> Result<(), error::Error> {
+    let mut curr_chapter: schema::Chapter = sqlx::query_as("SELECT * FROM chapter WHERE id = $1")
+        .bind(chapter_id)
+        .fetch_one(db_pool)
+        .await?;
     let question_types_array = chapter_page_metadata
         .get("questions")
         .ok_or_else(|| {
@@ -63,7 +67,9 @@ pub async fn extract(
             )
             .await
             {
-                Ok(_) => {}
+                Ok(_) => {
+                    curr_chapter.total_questions += 1;
+                }
                 Err(e) => {
                     match e {
                         examside::QuestionResult::Error(e) => {
@@ -79,5 +85,19 @@ pub async fn extract(
             };
         }
     }
+
+    log_tx
+        .send(crate::ScraperLog::Info(format!(
+            "Extracted Chapter: {:#?}",
+            curr_chapter
+        )))
+        .await?;
+
+    sqlx::query("UPDATE chapter SET total_questions = $1 WHERE id = $2")
+        .bind(curr_chapter.total_questions)
+        .bind(chapter_id)
+        .execute(db_pool)
+        .await?;
+
     Ok(())
 }

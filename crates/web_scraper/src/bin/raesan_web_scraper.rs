@@ -31,10 +31,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while let Some(scraper_log) = log_rx.recv().await {
         match scraper_log {
             web_scraper::ScraperLog::Info(msg) => {
-                log::info!("ScraperLog Info {}", msg);
+                log::info!("{}", msg);
             }
             web_scraper::ScraperLog::Warn(msg) => {
-                log::warn!("ScraperLog Warn {}", msg);
+                log::warn!("{}", msg);
             }
         }
     }

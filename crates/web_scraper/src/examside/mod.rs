@@ -28,15 +28,14 @@ impl crate::Scraper for ExamSide {
         db_pool: &sqlx::Pool<sqlx::Sqlite>,
         log_tx: mpsc::Sender<crate::ScraperLog>,
     ) -> Result<(), error::Error> {
-        // TODO
-        let _ = log_tx;
         for exam_path in Self::FETCH_PATHS {
             let exam_page_metadata = pages::metadata::extract(
                 &format!("{}/{}", Self::BASE_URL, exam_path),
                 log_tx.clone(),
             )
             .await?;
-            let curr_exam = pages::exam_page::extract(db_pool, &exam_page_metadata).await?;
+            let curr_exam =
+                pages::exam_page::extract(db_pool, log_tx.clone(), &exam_page_metadata).await?;
 
             let subjects: Vec<schema::Subject> =
                 sqlx::query_as::<_, schema::Subject>("SELECT * FROM subject WHERE exam_id = $1")
@@ -69,6 +68,13 @@ impl crate::Scraper for ExamSide {
                         .fetch_one(db_pool)
                         .await?;
 
+                    log_tx
+                        .send(crate::ScraperLog::Info(format!(
+                            "Fetching page data for (exam/subject/chapter): {}/{}/{}",
+                            curr_exam.title, curr_subject.title, curr_chapter.title
+                        )))
+                        .await?;
+
                     let chapter_fetch_path = format!(
                         "{}/{}/{}/{}",
                         Self::BASE_URL,
@@ -76,14 +82,9 @@ impl crate::Scraper for ExamSide {
                         subject_record.source_key,
                         chapter_record.source_key
                     );
-                    log_tx
-                        .send(crate::ScraperLog::Info(format!(
-                            "Fetching page data for (exam/subject/chapter): {}/{}/{}",
-                            curr_exam.title, curr_subject.title, curr_chapter.title
-                        )))
-                        .await?;
                     let chapter_page_metadata =
                         pages::metadata::extract(&chapter_fetch_path, log_tx.clone()).await?;
+
                     pages::chapter_page::extract(
                         db_pool,
                         log_tx.clone(),

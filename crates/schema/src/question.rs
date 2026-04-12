@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
 pub struct Question {
     pub id: String,
@@ -7,7 +5,7 @@ pub struct Question {
     pub question_type: crate::QuestionType,
     pub content: String,
     #[sqlx(skip)]
-    pub options: HashMap<String, crate::QuestionOption>,
+    pub options: Vec<crate::QuestionOption>,
     pub answer: String,
 }
 

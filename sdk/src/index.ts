@@ -5,9 +5,28 @@ export const fetch_filter_metadata = async (server_utils?, API_URL: string) => {
 		const res = await invoke("filter_metadata");
 		return res;
 	} else {
+		const url = `${API_URL}/api/filter_metadata`;
 		const res = server_utils
-			? await server_utils.fetch(`${API_URL}/api/filter_metadata`, { method: "GET" })
-			: await fetch(`${API_URL}/api/filter_metadata`, { method: "GET" });
+			? await server_utils.fetch(url, { method: "GET" })
+			: await fetch(url, { method: "GET" });
+		if (!res.ok) {
+			throw new Error(`HTTP error: ${res.status}`);
+		}
+		return await res.json();
+	}
+};
+
+export const fetch_chapter_data = async (server_utils?, API_URL: string, chapter_id: string) => {
+	if (isTauri()) {
+		const res = await invoke("chapter_data", {
+			chapter_id
+		});
+		return res;
+	} else {
+		const url = `${API_URL}/api/chapter_data/${chapter_id}`;
+		const res = server_utils
+			? await server_utils.fetch(url, { method: "GET" })
+			: await fetch(url, { method: "GET" });
 		if (!res.ok) {
 			throw new Error(`HTTP error: ${res.status}`);
 		}

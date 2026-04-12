@@ -26,6 +26,10 @@ async fn run() -> Result<(), error::Error> {
             "/api/filter_metadata",
             routing::get(routes::api::filter_metadata),
         )
+        .route(
+            "/api/chapter_data/{chapter_id}",
+            routing::get(routes::api::chapter_data),
+        )
         .route("/api/create_test", routing::post(routes::api::create_test))
         .route_layer(axum::middleware::from_fn_with_state(
             server_state.clone(),

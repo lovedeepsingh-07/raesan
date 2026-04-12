@@ -1,12 +1,10 @@
-use std::collections::HashMap;
-
 pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     json: &serde_json::Value,
     question_id: &str,
     question_type: &schema::QuestionType,
-) -> Result<HashMap<String, schema::QuestionOption>, error::Error> {
-    let mut output = HashMap::new();
+) -> Result<Vec<schema::QuestionOption>, error::Error> {
+    let mut output: Vec<schema::QuestionOption> = Vec::new();
 
     if *question_type != schema::QuestionType::MCQ {
         return Ok(output);
@@ -65,15 +63,12 @@ pub async fn from_json(
             .execute(db_pool)
             .await?;
 
-        output.insert(
-            option_key.clone(),
-            schema::QuestionOption {
-                id: question_option_id,
-                question_id: question_id.to_string(),
-                key: option_key,
-                value: option_value,
-            },
-        );
+        output.push(schema::QuestionOption {
+            id: question_option_id,
+            question_id: question_id.to_string(),
+            key: option_key,
+            value: option_value,
+        });
     }
 
     Ok(output)
