@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { CirclePlus, NotebookPen } from "@lucide/svelte";
 	import { Button } from "$components";
-	import { goto } from "$app/navigation";
 	let test_list = $state([]);
 </script>
 
 <div class="flex flex-col gap-[20px]">
 	<div><p class="text-4xl italic">Welcome to raesan</p></div>
 	<div class="flex flex-col gap-[10px]">
-		<div class="justify-left items-left flex max-xs:flex-col xs:gap-[10px]">
+		<div class="justify-left flex items-start max-xs:flex-col xs:gap-[10px]">
 			<p class="text-2xl">Your Tests</p>
 			<div class="flex items-center gap-[10px]">
 				<Button
@@ -17,12 +16,11 @@
 					}}
 					class="flex gap-[5px]">Create <CirclePlus /></Button
 				>
-				<Button
-					onclick={() => {
-						goto("/practice");
-					}}
-					class="flex gap-[5px]">Practice <NotebookPen /></Button
-				>
+				<a href="/practice">
+					<Button class="flex gap-[5px]">
+						Practice <NotebookPen />
+					</Button>
+				</a>
 			</div>
 		</div>
 		<div>

@@ -31,7 +31,7 @@ pub async fn from_json(
     json: &serde_json::Value,
     chapter_id: &str,
     question_type: schema::QuestionType,
-) -> Result<schema::Question, QuestionResult> {
+) -> Result<schema::Question, examside::QuestionResult> {
     let question_id = uuid::Uuid::new_v4().to_string();
     let question_body_data = json
         .get("question")
@@ -66,19 +66,20 @@ pub async fn from_json(
         || question_content.contains("jpg")
         || question_content.contains("jpeg")
     {
-        return Err(QuestionResult::Filtered);
+        return Err(examside::QuestionResult::Filtered);
     }
 
+    let cleaned_question_content = ammonia::clean(&question_content);
     let question_answer = get_answer(&question_type, question_body_data).await?;
     sqlx::query(schema::Question::INSERT_QUERY)
         .bind(&question_id)
         .bind(chapter_id)
         .bind(&question_type)
-        .bind(&question_content)
+        .bind(&cleaned_question_content)
         .bind(&question_answer)
         .execute(db_pool)
         .await
-        .map_err(|e| QuestionResult::Error(error::Error::from(e)))?;
+        .map_err(|e| examside::QuestionResult::Error(error::Error::from(e)))?;
 
     let question_options = examside::question_option_from_json(
         db_pool,
@@ -86,13 +87,12 @@ pub async fn from_json(
         &question_id,
         &question_type,
     )
-    .await
-    .map_err(QuestionResult::Error)?;
+    .await?;
     Ok(schema::Question {
         id: question_id,
         chapter_id: chapter_id.to_string(),
         question_type,
-        content: question_content,
+        content: cleaned_question_content,
         options: question_options,
         answer: question_answer,
     })
@@ -101,25 +101,25 @@ pub async fn from_json(
 pub async fn get_answer(
     question_type: &schema::QuestionType,
     json: &serde_json::Value,
-) -> Result<String, QuestionResult> {
+) -> Result<String, examside::QuestionResult> {
     match question_type {
         schema::QuestionType::MCQ => {
             let answer = json
                 .get("correct_options")
-                .ok_or(QuestionResult::MissingAnswer)?
+                .ok_or(examside::QuestionResult::MissingAnswer)?
                 .get(0)
-                .ok_or(QuestionResult::MissingAnswer)?
+                .ok_or(examside::QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or(QuestionResult::MissingAnswer)?
+                .ok_or(examside::QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }
         schema::QuestionType::INTEGER => {
             let answer = json
                 .get("answer")
-                .ok_or(QuestionResult::MissingAnswer)?
+                .ok_or(examside::QuestionResult::MissingAnswer)?
                 .as_str()
-                .ok_or(QuestionResult::MissingAnswer)?
+                .ok_or(examside::QuestionResult::MissingAnswer)?
                 .to_string();
             return Ok(answer);
         }

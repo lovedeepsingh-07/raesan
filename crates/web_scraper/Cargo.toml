@@ -4,6 +4,7 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+ammonia = { workspace = true }
 boa_engine = { workspace = true }
 error = { path = "../error", features = [
   "reqwest",
