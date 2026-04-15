@@ -1,3 +1,9 @@
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import remarkMath from "remark-math";
+import remarkRehype from "remark-rehype";
+import rehypeKatex from "rehype-katex";
+import rehypeStringify from "rehype-stringify";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 
 export const fetch_filter_metadata = async (server_utils?, API_URL: string) => {
@@ -32,4 +38,16 @@ export const fetch_chapter_data = async (server_utils?, API_URL: string, chapter
 		}
 		return await res.json();
 	}
+};
+
+export const render_content = async (input: string) => {
+	const result = await unified()
+		.use(remarkParse)
+		.use(remarkMath)
+		.use(remarkRehype)
+		.use(rehypeKatex)
+		.use(rehypeStringify)
+		.process(input);
+
+	return String(result);
 };

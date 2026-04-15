@@ -66,7 +66,7 @@ pub async fn from_json(
             return Err(examside::QuestionResult::Filtered);
         }
 
-        let cleaned_option_value = ammonia::clean(&option_value);
+        let cleaned_option_value = examside::content_cleaner::clean(&option_value).await?;
 
         sqlx::query(schema::QuestionOption::INSERT_QUERY)
             .bind(&question_option_id)

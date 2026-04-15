@@ -1,5 +1,6 @@
 pub mod from_json;
 pub mod pages;
+pub mod content_cleaner;
 
 pub use from_json::chapter::from_json as chapter_from_json;
 pub use from_json::exam::from_json as exam_from_json;

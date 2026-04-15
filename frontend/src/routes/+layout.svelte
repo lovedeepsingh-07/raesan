@@ -14,6 +14,7 @@
 <ModeWatcher defaultMode={"dark"} />
 
 <Navbar />
+
 <div class="mx-auto w-full max-w-[78%]">
 	{@render children()}
 </div>

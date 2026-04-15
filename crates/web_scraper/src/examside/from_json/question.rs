@@ -69,7 +69,7 @@ pub async fn from_json(
         return Err(examside::QuestionResult::Filtered);
     }
 
-    let cleaned_question_content = ammonia::clean(&question_content);
+    let cleaned_question_content = examside::content_cleaner::clean(&question_content).await?;
     let question_answer = get_answer(&question_type, question_body_data).await?;
     sqlx::query(schema::Question::INSERT_QUERY)
         .bind(&question_id)
