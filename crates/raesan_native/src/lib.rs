@@ -13,7 +13,7 @@ pub async fn run() {
             Ok(())
         })
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![commands::filter_metadata])
+        .invoke_handler(tauri::generate_handler![commands::filter_metadata, commands::create_test, commands::chapter_data])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

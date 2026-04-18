@@ -15,7 +15,7 @@ run_frontend:
 	PUBLIC_APP_PLATFORM="web" bun run dev
 
 test:
-	cargo test -- --no-capture
+	cargo test -p web_scraper -- --no-capture
 
 lint:
 	@cargo clippy -- \

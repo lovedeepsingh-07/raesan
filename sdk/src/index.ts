@@ -1,8 +1,6 @@
+import katex from "katex";
 import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkMath from "remark-math";
-import remarkRehype from "remark-rehype";
-import rehypeKatex from "rehype-katex";
+import rehypeParse from "rehype-parse";
 import rehypeStringify from "rehype-stringify";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 
@@ -40,14 +38,22 @@ export const fetch_chapter_data = async (server_utils?, API_URL: string, chapter
 	}
 };
 
-export const render_content = async (input: string) => {
-	const result = await unified()
-		.use(remarkParse)
-		.use(remarkMath)
-		.use(remarkRehype)
-		.use(rehypeKatex)
-		.use(rehypeStringify)
-		.process(input);
+export const render_math = (input: string) => {
+	const with_math = input
+		.replace(/\$\$([\s\S]+?)\$\$/g, (_, math) => {
+			// const cleaned = math.replace(/<br\s*\/?>/gi, " \\\\ ");
+			return katex.renderToString(math.trim(), { displayMode: false, throwOnError: false });
+		})
+		.replace(/\$([^\$]+?)\$/g, (_, math) => {
+			// const cleaned = math.replace(/<br\s*\/?>/gi, " \\\\ ");
+			return katex.renderToString(math.trim(), { displayMode: false, throwOnError: false });
+		});
 
-	return String(result);
+	const result = unified()
+		.use(rehypeParse, { fragment: true })
+		.use(rehypeStringify)
+		.processSync(with_math);
+
+	const output = String(result);
+	return output;
 };
