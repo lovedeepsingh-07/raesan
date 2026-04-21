@@ -1,11 +1,17 @@
 <script lang="ts">
-	import { Button, SyncingAgentPopup } from "$components";
-	import { render_math } from "@raesan/sdk";
+	import { SyncingAgentPopup, QuestionDisplay } from "$components";
+	import { onMount } from "svelte";
 	import "katex/dist/katex.min.css";
 
-	let curr_question_index = $state(0);
-
 	let { data } = $props();
+
+	let curr_question_index: number = $state(0);
+	onMount(() => {
+		const cached_index: number = localStorage.getItem(`${data.chapter_id}_curr_question_index`);
+		if (cached_index) {
+			curr_question_index = parseInt(cached_index, 10);
+		}
+	});
 </script>
 
 {#await data.chapter_data}
@@ -15,26 +21,12 @@
 		<p>No questions</p>
 	{:else}
 		{@const curr_question = curr_chapter.questions[curr_question_index]}
-		<div class="items-top flex gap-[6px]">
-			<p>{curr_question_index + 1}.</p>
-			<div class="flex flex-col items-start gap-[2px]">
-				{@html render_math(curr_question.content)}
-				<div class="flex flex-col items-start">
-					{#each curr_question.options as curr_option}
-						<div class="items-top flex gap-[6px]">
-							<p>{curr_option.key}.</p>
-							{@html render_math(curr_option.value)}
-						</div>
-					{/each}
-				</div>
-			</div>
-		</div>
-		<Button
-			onclick={() => {
-				curr_question_index += 1;
-			}}
-			class="flex gap-[5px]">Next</Button
-		>
+		<QuestionDisplay
+			chapter_id={data.chapter_id}
+			{curr_question}
+			total_questions={curr_chapter.total_questions}
+			bind:curr_question_index
+		/>
 	{/if}
 {:catch error}
 	<p>error loading filter metadata: {error.message}</p>

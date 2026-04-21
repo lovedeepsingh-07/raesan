@@ -12,12 +12,13 @@
 			<div class="flex items-center gap-[10px]">
 				<Button
 					onclick={() => {
-						alert("create test");
+						alert("coming soon...");
 					}}
-					class="flex gap-[5px]">Create <CirclePlus /></Button
+					class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
+					>Create <CirclePlus /></Button
 				>
 				<a href="/practice">
-					<Button class="flex gap-[5px]">
+					<Button class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80">
 						Practice <NotebookPen />
 					</Button>
 				</a>

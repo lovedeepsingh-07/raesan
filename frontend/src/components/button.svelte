@@ -2,8 +2,6 @@
 	let { children, class: className = "", ...rest } = $props();
 </script>
 
-<button
-	{...rest}
-	class={`rounded bg-primary px-2 py-1 text-primary-foreground transition-all hover:cursor-pointer hover:bg-primary/80 ${className}`}
+<button {...rest} class={`rounded-lg px-2 py-1 transition-all hover:cursor-pointer ${className}`}
 	>{@render children()}</button
 >
