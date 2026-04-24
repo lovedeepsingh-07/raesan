@@ -3,13 +3,12 @@
   crane,
   ...
 }: let
-  workspace_toml = builtins.fromTOML (builtins.readFile ../Cargo.toml);
+  workspace_toml = builtins.fromTOML (builtins.readFile ../../Cargo.toml);
   package_name = "raesan";
   package_version = workspace_toml.workspace.package.version;
   crane_lib = (crane.mkLib pkgs).overrideToolchain rust_pkg;
-  clean_src = crane_lib.cleanCargoSource ../.;
   full_src = pkgs.lib.cleanSourceWith {
-    src = ../.;
+    src = ../../.;
     filter = path: type: let
       name = builtins.baseNameOf path;
     in
@@ -22,6 +21,7 @@
         || name == ".direnv"
       );
   };
+  clean_src = crane_lib.cleanCargoSource full_src;
   common_args = {
     pname = package_name;
     src = clean_src;
@@ -70,27 +70,8 @@ in {
       cargoExtraArgs = "--bin ${pname}";
       cargoArtifacts = cargo_artifacts;
     });
-	frontend = pkgs.stdenv.mkDerivation rec {
-		pname = "${package_name}_frontend";
-		version = package_version;
-		src = ../frontend;
-		nativeBuildInputs = [
-			pkgs.yarn-berry_4.yarnBerryConfigHook
-			pkgs.yarn-berry_4
-		];
-	    missingHashes = ../frontend/missing-hashes.json;
-		offlineCache = pkgs.yarn-berry_4.fetchYarnBerryDeps {
-			inherit src missingHashes;
-			hash = "sha256-EAIdKufr2d0ISOKhtQL+Vv7JJJpvaXEJswWVWj4ltzQ=";
-		};
-		PUBLIC_APP_PLATFORM = "web";
-		PUBLIC_API_URL = "http://localhost:8080";
-		buildPhase = ''
-			yarn run build
-		'';
-		installPhase = ''
-			mkdir -p $out
-			cp -R build/ $out/
-		'';
+	frontend = pkgs.callPackage ./frontend.nix {
+		inherit package_name package_version;
+		yarn_berry = pkgs.yarn-berry_4;
 	};
 }

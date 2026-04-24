@@ -12,9 +12,9 @@ run_web:
 	cargo run -p raesan_web
 
 run_frontend:
-	PUBLIC_APP_PLATFORM="web" bun run dev
+	PUBLIC_APP_PLATFORM="web" yarn run dev
 build_frontend:
-	PUBLIC_APP_PLATFORM="web" bun run build
+	PUBLIC_APP_PLATFORM="web" yarn run build
 
 test:
 	@cargo test -p web_scraper -- --no-capture

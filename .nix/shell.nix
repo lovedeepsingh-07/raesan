@@ -7,16 +7,15 @@
     packages = [
       pkgs.alejandra
       rust_pkg
-      pkgs.bun
-	  pkgs.nodejs
-	  pkgs.yarn-berry_4
-	  pkgs.yarn-berry_4.yarn-berry-fetcher
+      pkgs.yarn-berry_4
+      pkgs.yarn-berry_4.yarn-berry-fetcher
       pkgs.act
       pkgs.jq
       pkgs.lld
       pkgs.clang
       pkgs.sqlitebrowser
       pkgs.cargo-tauri
+      pkgs.live-server
 
       pkgs.pkg-config
       pkgs.sqlite

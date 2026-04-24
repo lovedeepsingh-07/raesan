@@ -448,45 +448,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@raesan/frontend@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@raesan/frontend@workspace:."
-  dependencies:
-    "@eslint/compat": "npm:^2.0.2"
-    "@eslint/js": "npm:^9.39.2"
-    "@lucide/svelte": "npm:^0.577.0"
-    "@sveltejs/adapter-static": "npm:^3.0.10"
-    "@sveltejs/kit": "npm:^2.50.2"
-    "@sveltejs/vite-plugin-svelte": "npm:^6.2.4"
-    "@tailwindcss/vite": "npm:^4.1.18"
-    "@tauri-apps/api": "npm:^2.10.1"
-    "@tauri-apps/plugin-opener": "npm:^2.5.3"
-    "@types/node": "npm:^22"
-    clsx: "npm:^2.1.1"
-    eslint: "npm:^9.39.2"
-    eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-svelte: "npm:^3.14.0"
-    globals: "npm:^17.3.0"
-    katex: "npm:^0.16.45"
-    mode-watcher: "npm:^1.1.0"
-    prettier: "npm:^3.8.1"
-    prettier-plugin-svelte: "npm:^3.4.1"
-    prettier-plugin-tailwindcss: "npm:^0.7.2"
-    rehype-parse: "npm:^9.0.1"
-    rehype-stringify: "npm:^10.0.1"
-    svelte: "npm:^5.51.0"
-    svelte-check: "npm:^4.4.2"
-    tailwind-merge: "npm:^3.4.0"
-    tailwind-variants: "npm:^3.2.2"
-    tailwindcss: "npm:^4.1.18"
-    typescript: "npm:^5.9.3"
-    typescript-eslint: "npm:^8.54.0"
-    unified: "npm:^11.0.5"
-    vite: "npm:^7.3.1"
-    zod: "npm:^4.3.6"
-  languageName: unknown
-  linkType: soft
-
 "@rollup/rollup-android-arm-eabi@npm:4.60.2":
   version: 4.60.2
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.60.2"
@@ -688,8 +649,8 @@ __metadata:
   linkType: hard
 
 "@sveltejs/kit@npm:^2.50.2":
-  version: 2.57.1
-  resolution: "@sveltejs/kit@npm:2.57.1"
+  version: 2.58.0
+  resolution: "@sveltejs/kit@npm:2.58.0"
   dependencies:
     "@standard-schema/spec": "npm:^1.0.0"
     "@sveltejs/acorn-typescript": "npm:^1.0.5"
@@ -716,7 +677,7 @@ __metadata:
       optional: true
   bin:
     svelte-kit: svelte-kit.js
-  checksum: 10c0/53a15aa190931f34449f887e1f4ca433788220a15221dafaed82cdb120655fe8826fb6089bad4d3ca48540db4d48147652c97d3a414f7d06ba419c3ea0bdce19
+  checksum: 10c0/b21a38899c287d997b72df40e78039ef1a12f9a1f8ca0e2f8932a671bf4473a8e8a8a5de249d6bbb05e48f7dd442fe09fabf0ea286495da3f04a10ecd6317507
   languageName: node
   linkType: hard
 
@@ -2710,6 +2671,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"raesan_frontend@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "raesan_frontend@workspace:."
+  dependencies:
+    "@eslint/compat": "npm:^2.0.2"
+    "@eslint/js": "npm:^9.39.2"
+    "@lucide/svelte": "npm:^0.577.0"
+    "@sveltejs/adapter-static": "npm:^3.0.10"
+    "@sveltejs/kit": "npm:^2.50.2"
+    "@sveltejs/vite-plugin-svelte": "npm:^6.2.4"
+    "@tailwindcss/vite": "npm:^4.1.18"
+    "@tauri-apps/api": "npm:^2.10.1"
+    "@tauri-apps/plugin-opener": "npm:^2.5.3"
+    "@types/node": "npm:^22"
+    clsx: "npm:^2.1.1"
+    eslint: "npm:^9.39.2"
+    eslint-config-prettier: "npm:^10.1.8"
+    eslint-plugin-svelte: "npm:^3.14.0"
+    globals: "npm:^17.3.0"
+    katex: "npm:^0.16.45"
+    mode-watcher: "npm:^1.1.0"
+    prettier: "npm:^3.8.1"
+    prettier-plugin-svelte: "npm:^3.4.1"
+    prettier-plugin-tailwindcss: "npm:^0.7.2"
+    rehype-parse: "npm:^9.0.1"
+    rehype-stringify: "npm:^10.0.1"
+    svelte: "npm:^5.51.0"
+    svelte-check: "npm:^4.4.2"
+    tailwind-merge: "npm:^3.4.0"
+    tailwind-variants: "npm:^3.2.2"
+    tailwindcss: "npm:^4.1.18"
+    typescript: "npm:^5.9.3"
+    typescript-eslint: "npm:^8.54.0"
+    unified: "npm:^11.0.5"
+    vite: "npm:^7.3.1"
+    zod: "npm:^4.3.6"
+  languageName: unknown
+  linkType: soft
+
 "readdirp@npm:^4.0.1":
   version: 4.1.2
   resolution: "readdirp@npm:4.1.2"
@@ -3011,8 +3011,8 @@ __metadata:
   linkType: hard
 
 "svelte@npm:^5.51.0":
-  version: 5.55.4
-  resolution: "svelte@npm:5.55.4"
+  version: 5.55.5
+  resolution: "svelte@npm:5.55.5"
   dependencies:
     "@jridgewell/remapping": "npm:^2.3.4"
     "@jridgewell/sourcemap-codec": "npm:^1.5.0"
@@ -3030,7 +3030,7 @@ __metadata:
     locate-character: "npm:^3.0.0"
     magic-string: "npm:^0.30.11"
     zimmerframe: "npm:^1.1.2"
-  checksum: 10c0/d563f3db0416dbff458a8b7dcbd4f3061d7e0e93a703d80d9ee1640754c30234563ac91a58988552949cdf6f95f84a5f5ef6dff48ac7627d6c85081121262532
+  checksum: 10c0/4ac6b31ba24b68ef8fdc6c765819c676a107e5dd2221c849ca7b712f522fd195241c4bbfb2a355da0d6dc1646ed52ed0b2a7e8efe472d14bc86cd14bce3ecb44
   languageName: node
   linkType: hard
 
