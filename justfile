@@ -13,9 +13,11 @@ run_web:
 
 run_frontend:
 	PUBLIC_APP_PLATFORM="web" bun run dev
+build_frontend:
+	PUBLIC_APP_PLATFORM="web" bun run build
 
 test:
-	cargo test -p web_scraper -- --no-capture
+	@cargo test -p web_scraper -- --no-capture
 
 lint:
 	@cargo clippy -- \
@@ -26,3 +28,8 @@ fmt:
 	@alejandra .
 	@cargo fmt
 
+build_nix package:
+	@mkdir -p build
+	@nix build .#{{package}}
+	@cp -f -R result/bin/* build/
+	@cp -f -R ./test.db build/
