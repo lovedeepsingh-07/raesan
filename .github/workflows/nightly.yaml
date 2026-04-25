@@ -1,0 +1,26 @@
+name: Nightly Testing with CI/CD
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  web_scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+      - name: Build
+        run: nix build .#web_scraper --print-build-logs
+      - name: Delete old release
+        run: gh release delete nightly --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Populate Database
+        run: result/bin/raesan_web_scraper
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          files: raesan.db

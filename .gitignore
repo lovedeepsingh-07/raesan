@@ -1,6 +1,7 @@
 target
 node_modules
 test.db
+raesan.db
 test.ron
 raesan_data
 result

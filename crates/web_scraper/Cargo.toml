@@ -16,6 +16,7 @@ error = { path = "../error", features = [
 env_logger = { workspace = true }
 log = { workspace = true }
 once_cell = { workspace = true }
+raesan = { path = "../raesan" }
 regex = { workspace = true }
 reqwest = { workspace = true }
 ron = { workspace = true }

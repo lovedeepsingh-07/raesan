@@ -12,7 +12,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .init();
 
     // create database connection
-    let db_options = sqlite::SqliteConnectOptions::from_str("./test.db")?.create_if_missing(true);
+    let db_options = sqlite::SqliteConnectOptions::from_str(
+        format!("./{}.db", raesan::constants::DB_NAME).as_str(),
+    )?
+    .create_if_missing(true);
     let db_pool = sqlite::SqlitePoolOptions::new()
         .connect_with(db_options)
         .await?;

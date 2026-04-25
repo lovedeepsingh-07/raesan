@@ -5,7 +5,7 @@
   build_inputs,
   ...
 }: let
-  package_name = "web_scraper";
+  package_name = "raesan_web_scraper";
   src = gitignore.lib.gitignoreSource ../../.;
   workspace_toml = builtins.fromTOML (builtins.readFile (src + "/Cargo.toml"));
   package_version = workspace_toml.workspace.package.version;
@@ -26,6 +26,6 @@ in
   crane_lib.buildPackage (common_args
     // rec {
       pname = package_name;
-      cargoExtraArgs = "-p ${pname}";
+      cargoExtraArgs = "--bin ${pname}";
       cargoArtifacts = cargo_artifacts;
     })
