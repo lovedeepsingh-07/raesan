@@ -9,7 +9,6 @@
       rust_pkg
       pkgs.yarn-berry_4
       pkgs.yarn-berry_4.yarn-berry-fetcher
-      pkgs.act
       pkgs.jq
       pkgs.lld
       pkgs.clang

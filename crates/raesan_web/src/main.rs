@@ -9,9 +9,17 @@ use tower_http::cors;
 
 async fn run() -> Result<(), error::Error> {
     let frontend_url: String =
-        std::env::var("FRONTEND_URL").unwrap_or_else(|_| "https://raesan.pages.dev".to_string());
+        std::env::var(raesan::environment::FRONTEND_URL__NAME).map_err(|e| {
+            error::Error::NotFoundError(format!(
+                "Failed to get the {:#?} environment variable, {}",
+                raesan::environment::FRONTEND_URL__NAME,
+                e
+            ))
+        })?;
+    let db_url = format!("./{}.db", raesan::constants::DB_NAME);
+    let server_state = Arc::new(state::ServerState::new(db_url.as_str()).await?);
 
-    let server_state = Arc::new(state::ServerState::new("./test.db").await?);
+    // on development, I allow nothing, on production, I allow the "frontend_url" to pass through
     let cors = match server_state.app.env {
         raesan::Environment::DEV => cors::CorsLayer::permissive(),
         raesan::Environment::PROD => cors::CorsLayer::new()

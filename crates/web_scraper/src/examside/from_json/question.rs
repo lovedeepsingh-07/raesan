@@ -60,7 +60,7 @@ pub async fn from_json(
         })?
         .to_string();
 
-    // NOTE: I cannot host pictures right now, so it would be the best idea to only store
+    // I cannot host pictures right now, so it would be the best idea to only store
     // non-picture based questions for now, hence we filter all the picture based questions
     if question_content.contains("https")
         || question_content.contains("jpg")

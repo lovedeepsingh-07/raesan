@@ -1,5 +1,4 @@
 export PUBLIC_APP_ENV := "development"
-export PUBLIC_FRONTEND_URL := "https://raesan.pages.dev"
 export PUBLIC_API_URL := "http://localhost:8080"
 
 build:

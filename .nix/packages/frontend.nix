@@ -2,18 +2,20 @@
   stdenv,
   gitignore,
   yarn_berry,
+  zip,
 }: let
   src = gitignore.lib.gitignoreSource ../../frontend;
   package_json = builtins.fromJSON (builtins.readFile (src + "/package.json"));
   missing_hashes = src + "/missing-hashes.json";
 in
-  stdenv.mkDerivation {
+  stdenv.mkDerivation rec {
     pname = package_json.name;
     version = package_json.version;
     inherit src;
     nativeBuildInputs = [
       yarn_berry.yarnBerryConfigHook
       yarn_berry
+	  zip
     ];
     missingHashes = missing_hashes;
     offlineCache = yarn_berry.fetchYarnBerryDeps {
@@ -27,7 +29,9 @@ in
       yarn run build
     '';
     installPhase = ''
-      mkdir -p $out
-      cp -R build/* $out/
+      mkdir -p $out/dist $out/zip
+      cp -R build/* $out/dist/
+      cd $out/dist/
+	  zip -r $out/zip/${pname}-${version}.zip .
     '';
   }

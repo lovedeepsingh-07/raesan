@@ -15,7 +15,7 @@ impl QuestionOption {
             FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE,
             UNIQUE (question_id, key)
         )"#;
-    // NOTE: above, the "UNIQUE (question_id, key)" means the key must be unique per
+    // above, the "UNIQUE (question_id, key)" means the key must be unique per
     // question_id, this ensures there are no duplicate keys like two A, for 1 question
     pub const INSERT_QUERY: &str =
         "INSERT INTO question_option (id, question_id, key, value) VALUES (?1, ?2, ?3, ?4)";

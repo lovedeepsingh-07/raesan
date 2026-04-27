@@ -7,7 +7,7 @@ use tokio::sync::RwLock;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub async fn run() {
     let app_env = raesan::Environment::from(
-        match std::env::var("PUBLIC_APP_ENV") {
+        match std::env::var(raesan::environment::APP_ENV__NAME) {
             Ok(out) => out,
             Err(_) => {
                 log::warn!("Unable to get the app environment, assuming development environment");

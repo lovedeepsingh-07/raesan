@@ -11,7 +11,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .filter_level(log::LevelFilter::Off)
         .init();
 
-    // create database connection
     let db_options = sqlite::SqliteConnectOptions::from_str(
         format!("./{}.db", raesan::constants::DB_NAME).as_str(),
     )?
@@ -20,15 +19,31 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .connect_with(db_options)
         .await?;
 
-    // run migrations
     for migration in schema::get_migration_queries() {
         sqlx::query(migration).execute(&db_pool).await?;
     }
 
+    let examside_base_url = match std::env::var(raesan::environment::EXAMSIDE_BASE_URL__NAME) {
+        Ok(out) => out,
+        Err(e) => {
+            log::error!(
+                "Failed to get {:#?} environment variable, {}",
+                raesan::environment::EXAMSIDE_BASE_URL__NAME,
+                e
+            );
+            return Ok(());
+        }
+    };
+
     let (log_tx, mut log_rx) = mpsc::channel::<web_scraper::ScraperLog>(64);
     let scraper_db_pool = db_pool.clone();
     let scraper_handle = tokio::spawn(async move {
-        web_scraper::examside::ExamSide::scrape(&scraper_db_pool, log_tx).await
+        web_scraper::examside::ExamSide::scrape(
+            examside_base_url.as_str(),
+            &scraper_db_pool,
+            log_tx,
+        )
+        .await
     });
 
     while let Some(scraper_log) = log_rx.recv().await {

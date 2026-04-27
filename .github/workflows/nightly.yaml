@@ -1,6 +1,10 @@
 name: Nightly Testing with CI/CD
 on:
   workflow_dispatch:
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXAMSIDE_BASE_URL: ${{ secrets.EXAMSIDE_BASE_URL }}
+  FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
 permissions:
   contents: write
 jobs:
@@ -10,17 +14,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Nix
-        uses: cachix/install-nix-action@v31
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
       - name: Build
-        run: nix build .#web_scraper --print-build-logs
+        run: nix build
       - name: Delete old release
         run: gh release delete nightly --yes --cleanup-tag || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Populate Database
-        run: result/bin/raesan_web_scraper
+        run: result/raesan_web_scraper
       - name: Upload release artifacts
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nightly
-          files: raesan.db
+          files: |
+            result/*
+            raesan.db
