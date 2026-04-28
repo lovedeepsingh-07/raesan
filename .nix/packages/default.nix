@@ -34,6 +34,7 @@ in rec {
   };
   native = pkgs.callPackage ./native.nix {
     inherit gitignore crane_lib native_build_inputs build_inputs;
+    yarn_berry = pkgs.yarn-berry_4;
   };
   web = pkgs.callPackage ./web.nix {
     inherit gitignore crane_lib native_build_inputs build_inputs;
@@ -41,17 +42,19 @@ in rec {
   frontend = pkgs.callPackage ./frontend.nix {
     inherit gitignore;
     yarn_berry = pkgs.yarn-berry_4;
+    frontend_src = ../../frontend;
   };
   default = pkgs.stdenv.mkDerivation {
-  	pname = "raesan";
+    pname = "raesan";
     dontUnpack = true;
-	version = package_version;
-    nativeBuildInputs = [pkgs.zip web_scraper web frontend];
-	installPhase = ''
-      mkdir -p $out
-      cp -r ${web_scraper}/bin/* $out/
-      cp -r ${web}/bin/* $out/
-	  cp -r ${frontend}/zip/* $out/
-	'';
+    version = package_version;
+    nativeBuildInputs = [pkgs.zip web_scraper web frontend native];
+    installPhase = ''
+         mkdir -p $out
+         cp -r ${web_scraper}/bin/* $out/
+         cp -r ${web}/bin/* $out/
+         cp -r ${frontend}/zip/* $out/
+         cp -r ${native}/bin/* $out/
+    '';
   };
 }

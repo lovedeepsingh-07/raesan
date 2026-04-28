@@ -17,3 +17,4 @@ result
 .vercel
 .netlify
 .wrangler
+vite.config.ts.timestamp-*
