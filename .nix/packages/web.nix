@@ -3,6 +3,8 @@
   crane_lib,
   native_build_inputs,
   build_inputs,
+  dockerTools,
+  cacert,
   ...
 }: let
   package_name = "raesan_web";
@@ -22,10 +24,28 @@
     buildInputs = build_inputs;
   };
   cargo_artifacts = crane_lib.buildDepsOnly common_args;
-in
-  crane_lib.buildPackage (common_args
+in rec {
+  default = crane_lib.buildPackage (common_args
     // rec {
       pname = package_name;
       cargoExtraArgs = "-p ${pname}";
       cargoArtifacts = cargo_artifacts;
-    })
+    });
+  docker = dockerTools.buildLayeredImage {
+    name = package_name;
+    tag = "latest";
+    contents = [
+      cacert
+      default
+    ];
+    config = {
+      Cmd = ["/bin/raesan_web"];
+      ExposedPorts = {
+        "8080/tcp" = {};
+      };
+      Env = [
+        "SSL_CERT_FILE=${cacert}/etc/ssl/certs/ca-bundle.crt"
+      ];
+    };
+  };
+}

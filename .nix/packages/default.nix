@@ -28,6 +28,9 @@
     pkgs.gtk3
     pkgs.xdg-utils
   ];
+  web_pkg = pkgs.callPackage ./web.nix {
+    inherit gitignore crane_lib native_build_inputs build_inputs;
+  };
 in rec {
   web_scraper = pkgs.callPackage ./web_scraper.nix {
     inherit gitignore crane_lib native_build_inputs build_inputs;
@@ -36,9 +39,8 @@ in rec {
     inherit gitignore crane_lib native_build_inputs build_inputs;
     yarn_berry = pkgs.yarn-berry_4;
   };
-  web = pkgs.callPackage ./web.nix {
-    inherit gitignore crane_lib native_build_inputs build_inputs;
-  };
+  web = web_pkg.default;
+  web_docker = web_pkg.docker;
   frontend = pkgs.callPackage ./frontend.nix {
     inherit gitignore;
     yarn_berry = pkgs.yarn-berry_4;
@@ -50,11 +52,11 @@ in rec {
     version = package_version;
     nativeBuildInputs = [pkgs.zip web_scraper web frontend native];
     installPhase = ''
-         mkdir -p $out
-         cp -r ${web_scraper}/bin/* $out/
-         cp -r ${web}/bin/* $out/
-         cp -r ${frontend}/zip/* $out/
-         cp -r ${native}/bin/* $out/
+      mkdir -p $out
+      cp -r ${web_scraper}/bin/* $out/
+      cp -r ${web}/bin/* $out/
+      cp -r ${frontend}/zip/* $out/
+      cp -r ${native}/bin/* $out/
     '';
   };
 }

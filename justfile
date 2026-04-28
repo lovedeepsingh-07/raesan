@@ -10,6 +10,18 @@ run:
 run_web:
 	cargo run -p raesan_web
 
+run_web_docker:
+	nix build .#web_docker --print-build-logs
+	sudo docker load < result
+	id=$(sudo docker create raesan_web:latest) && \
+			sudo docker cp ./raesan.db $id:/raesan.db && \
+			sudo docker commit $id raesan_web:latest && \
+			sudo docker rm $id
+	sudo docker run -p 8080:8080 \
+			-e FRONTEND_URL="https://raesan.pages.dev" \
+			-e PUBLIC_APP_ENV="production" \
+			raesan_web:latest
+
 run_frontend:
 	PUBLIC_APP_PLATFORM="web" yarn run dev
 build_frontend:
@@ -26,9 +38,3 @@ lint:
 fmt:
 	@alejandra .
 	@cargo fmt
-
-build_nix package:
-	@mkdir -p build
-	@nix build .#{{package}}
-	@cp -f -R result/bin/* build/
-	@cp -f -R ./test.db build/

@@ -39,14 +39,13 @@ in
     // {
       pname = package_name;
       cargoArtifacts = cargo_artifacts;
-	  preBuild =
-	  ''
-	  	mkdir -p frontend/build
-		cp -r ${frontend_package}/dist/* frontend/build/
-	  '';
+      preBuild = ''
+         	mkdir -p frontend/build
+        cp -r ${frontend_package}/dist/* frontend/build/
+      '';
       buildPhaseCargoCommand = "cargo tauri build --no-bundle";
-	  installPhase = ''
-	  	mkdir -p $out/bin
-		cp -r target/release/${package_name} $out/bin/
-	  '';
+      installPhase = ''
+         	mkdir -p $out/bin
+        cp -r target/release/${package_name} $out/bin/
+      '';
     })
