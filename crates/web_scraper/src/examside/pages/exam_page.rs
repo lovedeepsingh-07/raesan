@@ -1,6 +1,9 @@
 use crate::examside;
 use tokio::sync::mpsc;
 
+// the exam page consists of all the data about the current exam, the subjects in that exam, and
+// the chapters in those corresponding subjects, so we can get all the important metadata from this
+// page alone, but in order to get the actual questions, we have to fetch the chapter pages
 pub async fn extract(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     log_tx: mpsc::Sender<crate::ScraperLog>,

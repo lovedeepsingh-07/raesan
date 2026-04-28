@@ -4,17 +4,19 @@
   ...
 }: {
   default = pkgs.mkShell {
-    nativeBuildInputs = [
+    packages = [
       pkgs.alejandra
       rust_pkg
-      pkgs.bun
-      pkgs.pkg-config
+      pkgs.yarn-berry_4
+      pkgs.yarn-berry_4.yarn-berry-fetcher
       pkgs.jq
       pkgs.lld
       pkgs.clang
       pkgs.sqlitebrowser
-    ];
-    buildInputs = [
+      pkgs.cargo-tauri
+      pkgs.live-server
+
+      pkgs.pkg-config
       pkgs.sqlite
       pkgs.libGL
       pkgs.xorg.libX11
@@ -23,7 +25,6 @@
       pkgs.xorg.libXinerama
       pkgs.xorg.libXcursor
       pkgs.xorg.libXi
-      pkgs.cargo-tauri
       pkgs.glib
       pkgs.gdk-pixbuf
       pkgs.pango

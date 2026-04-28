@@ -16,7 +16,7 @@ pub enum ScraperType {
     ExamSide,
 }
 
-// NOTE: on different sites, there are different ways to identify a specifc record like a specific
+// on different sites, there are different ways to identify a specifc record like a specific
 // exam or a specific chapter etc, on 1 site they might be using a slug for this, but on some other
 // site they might be using a UUID for the same thing
 // The "SourceRecord" struct handles this possibility by connecting the record (exam, subject, etc)

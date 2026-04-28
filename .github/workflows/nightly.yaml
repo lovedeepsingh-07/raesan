@@ -1,0 +1,54 @@
+name: Nightly Testing with CI/CD
+on:
+  workflow_dispatch:
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXAMSIDE_BASE_URL: ${{ secrets.EXAMSIDE_BASE_URL }}
+  FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+permissions:
+  contents: write
+  packages: write
+jobs:
+  nightly-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+      - name: Build
+        run: nix build
+      - name: Delete old release
+        run: gh release delete nightly --yes --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Populate Database
+        run: result/raesan_web_scraper
+      - name: Upload release artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          files: |
+            result/*
+            raesan.db
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build base Nix Docker Image
+        run: |
+          nix build .#web_docker --print-build-logs
+          docker load < result
+      - name: Commit populated database to docker image
+        run: |
+          id=$(docker create raesan_web:latest)
+          docker cp ./raesan.db $id:/raesan.db
+          docker commit $id ghcr.io/${{ github.repository_owner }}/raesan_web:nightly
+          docker rm $id
+      - name: Push docker images
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/raesan_web:nightly

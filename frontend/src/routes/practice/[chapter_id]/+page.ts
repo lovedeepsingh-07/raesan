@@ -1,5 +1,5 @@
 import { PUBLIC_API_URL } from "$env/static/public";
-import { fetch_chapter_data } from "@raesan/sdk";
+import { fetch_chapter_data } from "$sdk";
 
 export const load = async (server_utils) => {
 	const { chapter_id } = server_utils.params;

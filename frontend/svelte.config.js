@@ -10,7 +10,9 @@ const config = {
 		}),
 		alias: {
 			"$components/*": "./src/components/*",
-			$components: "./src/components/index.ts"
+			$components: "./src/components/index.ts",
+			"$sdk/*": "./src/sdk/*",
+			$sdk: "./src/sdk/index.ts"
 		}
 	}
 };

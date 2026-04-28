@@ -2,6 +2,13 @@ use crate::constants;
 use reqwest as req;
 use tokio::sync::mpsc;
 
+// in this website, the data for an exam page is stored in a JS object in a <script> tag of
+// the body, there are some things that are present along with the data in the <script> tag and I
+// use the relative positions of those things to extract the page JS object data
+//
+// the "extract" function is just a wrapper around the "fetch_and_extract"
+// function, the wrapper function just handles retrying in case something goes wrong with the fetch
+// attempt, e.g rate limiting
 pub async fn extract(
     page_url: &str,
     log_tx: mpsc::Sender<crate::ScraperLog>,

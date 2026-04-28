@@ -1,6 +1,18 @@
 use crate::examside;
 use tokio::sync::mpsc;
 
+// the reason why we provide the chapter_id to this function, is that we already have the chapter
+// in the database, we just need the questions for that chapter and to make a parent-child
+// relationship between the chapter and it's questions
+//
+// in this process, if anything goes wrong while fetching the questions, we don't retry, we just
+// skip that question, send a log, and just move on
+//
+// on the chapter page in the website, the actual questions are a little nested, so from the
+// fetched data, I firstly have to get the "questions" array, which is a misleading name because it
+// is question types array as it contains 3 sub arrays that themselves contain the questions of
+// different types such as one array contains MCQs, the other contains Integer questions and the
+// other contains MCQMs
 pub async fn extract(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     log_tx: mpsc::Sender<crate::ScraperLog>,

@@ -1,5 +1,3 @@
-#![allow(dead_code, unused_variables, unused_mut)]
-
 const BR_VARIANTS_REGEX: &str = r"(?i)<br\s*/?>";
 const DISPLAY_LATEX_REGEX: &str = r"\$\$(?s)(.*?)\$\$";
 const INLINE_LATEX_REGEX: &str = r"\$(?:[^$\\]|\\.)+?\$";
@@ -36,7 +34,6 @@ pub fn protect_latex(input: &str) -> (String, Vec<String>) {
 }
 
 pub fn sanitize_latex_token(token: &str) -> String {
-    // handle <br> inside latex blocks
     let br_re = regex::Regex::new(BR_VARIANTS_REGEX).unwrap();
     if token.starts_with("$$") && token.ends_with("$$") {
         let inner = &token[2..token.len() - 2];
@@ -69,10 +66,23 @@ pub async fn clean(input: &str) -> Result<String, error::Error> {
     // this step basically removes every class and script and everything that is not super needed
     // for the functionality of an HTML element
     let ammonia_cleaned = ammonia::clean(input);
+
+    // here we basically separate the latex from the other part of the question, so "this is
+    // $latex$" would be separated into two parts: "this is __LATEX_{id}__" and ["$latex$"], where
+    // the {id} would be equal to the index of the latex in the second vector, this is done to
+    // isolate the latex so that we can easily apply some manipulations to it later on
     let (protected_latex, mut latex_tokens) = protect_latex(&ammonia_cleaned);
+
+    // we go through all the latex_tokens that we extracted in the previous step and apply the
+    // "sanitize_latex_token" function on them, this basically cleans the latex tokens up, so if
+    // there are some HTML tags in side the latex blocks, this steps removes them and ensures that
+    // there is only latex inside the latex tokens
     for curr_token in latex_tokens.iter_mut() {
         *curr_token = sanitize_latex_token(curr_token);
     }
+
+    // after we have cleaned the latex tokens, we use the "restore_latex" function to reconstruct
+    // the question body with properly cleaned latex
     let output = restore_latex(&protected_latex, &latex_tokens);
 
     Ok(output)

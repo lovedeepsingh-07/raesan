@@ -4,16 +4,9 @@ pub struct AppState {
 }
 
 impl AppState {
-    pub async fn new(db_path: &str) -> Result<Self, error::Error> {
-        let app_env = match std::env::var("PUBLIC_APP_ENV") {
-            Ok(out) => out,
-            Err(_) => {
-                log::warn!("Unable to get the app environment, assuming development environment");
-                String::from("development")
-            }
-        };
-        let app = raesan::App::new(db_path, raesan::Environment::from(app_env.as_str())).await?;
-
-        Ok(Self { app })
+    pub async fn new(db_path: &str, app_env: raesan::Environment) -> Result<Self, error::Error> {
+        Ok(Self {
+            app: raesan::App::new(db_path, app_env).await?,
+        })
     }
 }

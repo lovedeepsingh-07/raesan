@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from "$components";
-	import { render_math } from "@raesan/sdk";
+	import { render_math } from "$sdk";
 
 	let attempt_data: { attempted: boolean; attempted_option?: string } = $state({
 		attempted: false,
