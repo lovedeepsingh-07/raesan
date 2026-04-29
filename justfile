@@ -1,6 +1,3 @@
-export PUBLIC_APP_ENV := "development"
-export PUBLIC_API_URL := "http://localhost:8080"
-
 build:
 	cargo tauri build
 
@@ -8,7 +5,7 @@ run:
 	PUBLIC_APP_PLATFORM="native" cargo tauri dev
 
 run_web:
-	cargo run -p raesan_web
+	doppler run -- cargo run -p raesan_web
 
 run_web_docker:
 	nix build .#web_docker --print-build-logs
@@ -22,8 +19,9 @@ run_web_docker:
 			-e PUBLIC_APP_ENV="production" \
 			raesan_web:latest
 
+[working-directory: "frontend"]
 run_frontend:
-	PUBLIC_APP_PLATFORM="web" yarn run dev
+	PUBLIC_APP_PLATFORM="web" doppler run -- yarn run dev
 build_frontend:
 	PUBLIC_APP_PLATFORM="web" yarn run build
 

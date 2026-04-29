@@ -12,8 +12,10 @@ pub async fn filter_metadata(
 // POST /api/create_test
 pub async fn create_test(
     axum::extract::State(server_state): axum::extract::State<Arc<state::ServerState>>,
+    axum::extract::Json(create_test_data): axum::extract::Json<serde_json::Value>,
 ) -> impl IntoResponse {
     let _ = server_state;
+    log::info!("{:#?}", create_test_data);
     "CREATING_TEST".into_response()
 }
 

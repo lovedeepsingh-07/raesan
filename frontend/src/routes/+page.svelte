@@ -10,13 +10,11 @@
 		<div class="justify-left flex items-start max-xs:flex-col xs:gap-[10px]">
 			<p class="text-2xl">Your Tests</p>
 			<div class="flex items-center gap-[10px]">
-				<Button
-					onclick={() => {
-						alert("coming soon...");
-					}}
-					class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
-					>Create <CirclePlus /></Button
-				>
+				<a href="/tests">
+					<Button class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
+						>Create <CirclePlus /></Button
+					>
+				</a>
 				<a href="/practice">
 					<Button class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80">
 						Practice <NotebookPen />
