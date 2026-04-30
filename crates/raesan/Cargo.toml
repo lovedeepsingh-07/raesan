@@ -4,9 +4,11 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+chrono = { workspace = true }
 env_logger = { workspace = true }
 error = { path = "../error", default-features = false, features = ["sqlx"] }
-# serde = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
 # serde_json = { workspace = true }
 log = { workspace = true }
 schema = { path = "../schema" }

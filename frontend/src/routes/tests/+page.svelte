@@ -18,9 +18,15 @@
 	<div class="fixed right-0 bottom-0 z-[40] p-4">
 		<Button
 			class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
-			onclick={() => {
-				console.log(`total questions: ${total_questions}`);
-				console.log(selected_chapters);
+			onclick={async () => {
+				const response = await fetch("", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						total_questions,
+						selected_chapters: [...selected_chapters]
+					})
+				});
 			}}>Create <CirclePlus /></Button
 		>
 	</div>

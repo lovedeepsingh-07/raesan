@@ -1,6 +1,14 @@
 use sqlx::sqlite;
 use std::str::FromStr;
 
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+pub struct RaesanTest {
+    pub id: String,
+    pub created_at: i64,
+    pub total_questions: usize,
+    pub questions: Vec<String>,
+}
+
 #[derive(Debug)]
 pub struct App {
     pub env: crate::Environment,
@@ -70,5 +78,12 @@ impl App {
         }
 
         Ok(curr_chapter)
+    }
+    pub async fn create_test(
+        &self,
+        total_questions: usize,
+        selected_chapters: Vec<String>,
+    ) -> Result<RaesanTest, error::Error> {
+        Ok(Default::default())
     }
 }
