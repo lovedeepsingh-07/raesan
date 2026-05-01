@@ -1391,6 +1391,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dexie@npm:^4.4.2":
+  version: 4.4.2
+  resolution: "dexie@npm:4.4.2"
+  checksum: 10c0/b6171347e8d7579600cc4b2ab4b1e3422991451f8f69c926caa15bdf223be9ca8ae86da87e141a2f626fa5d4647c6a9b917ffaa3f878be17c37c4c7533d5eaa6
+  languageName: node
+  linkType: hard
+
 "enhanced-resolve@npm:^5.19.0":
   version: 5.21.0
   resolution: "enhanced-resolve@npm:5.21.0"
@@ -2686,6 +2693,7 @@ __metadata:
     "@tauri-apps/plugin-opener": "npm:^2.5.3"
     "@types/node": "npm:^22"
     clsx: "npm:^2.1.1"
+    dexie: "npm:^4.4.2"
     eslint: "npm:^9.39.2"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-svelte: "npm:^3.14.0"

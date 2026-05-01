@@ -43,3 +43,13 @@ export const ExamModel = z.object({
 	subjects: z.array(SubjectModel).default([])
 });
 export type Exam = z.infer<typeof ExamModel>;
+
+export const RaesanTestModel = z.object({
+	id: z.uuidv4(),
+	created_at: z.number().int().default(0),
+	total_question: z.number().int().default(10),
+	total_mcq_questions: z.number().int().default(1),
+	total_integer_questions: z.number().int().default(1),
+	questions: z.array(QuestionModel).default([])
+});
+export type RaesanTest = z.infer<typeof RaesanTestModel>;

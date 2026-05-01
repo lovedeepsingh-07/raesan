@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { Button, SyncingAgentPopup } from "$components";
 	import { CirclePlus, ChevronUp, ChevronDown } from "@lucide/svelte";
+	import { db } from "$lib/database";
+	import type { RaesanTest } from "$sdk/models";
+	import { goto } from "$app/navigation";
+
 	const MAX_QUESTIONS = 50;
 	const MIN_QUESTIONS = 10;
 	const MAX_CHAPTERS = 10;
@@ -8,6 +12,8 @@
 	let total_questions = $state(10);
 	let selected_chapters: Set<string> = $state(new Set());
 	let open_sections: Set<string> = $state(new Set());
+
+	let creating_test: bool = $state(false);
 
 	let { data, children } = $props();
 </script>
@@ -19,7 +25,8 @@
 		<Button
 			class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
 			onclick={async () => {
-				const response = await fetch("", {
+				creating_test = true;
+				const res = await fetch("", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({
@@ -27,8 +34,18 @@
 						selected_chapters: [...selected_chapters]
 					})
 				});
-			}}>Create <CirclePlus /></Button
+				const data: RaesanTest = await res.json();
+				await db.test_list.add(data.test_data);
+				creating_test = false;
+				goto("/");
+			}}
 		>
+			{#if creating_test}
+				Creating...
+			{:else}
+				Create <CirclePlus />
+			{/if}
+		</Button>
 	</div>
 	<div class="mb-[120px] flex h-full w-full flex-col items-start justify-center gap-[32px]">
 		<div class="flex w-full max-w-[260px] flex-col items-start gap-[8px]">

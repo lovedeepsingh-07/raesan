@@ -1,7 +1,15 @@
 <script lang="ts">
 	import { CirclePlus, NotebookPen } from "@lucide/svelte";
 	import { Button } from "$components";
-	let test_list = $state([]);
+	import type { RaesanTest } from "$sdk/models";
+	import { onMount } from "svelte";
+	import { db } from "$lib/database";
+
+	let test_list: Array<RaesanTest> = $state([]);
+
+	onMount(async () => {
+		test_list = await db.test_list.toArray();
+	});
 </script>
 
 <div class="flex flex-col gap-[20px]">
@@ -24,11 +32,18 @@
 		</div>
 		<div>
 			{#if test_list.length == 0}
-				<p class="text-muted-foreground">You currently have no test.</p>
+				<p class="text-muted-foreground">You currently have no tests.</p>
 			{:else}
-				<div class="flex items-center justify-between gap-[10xp]">
+				<div
+					class="mt-[20px] grid w-full grid-cols-1 gap-[20px] px-4 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+				>
 					{#each test_list as curr_test}
-						<div class="bg-card p-2"></div>
+						<a
+							href={`/tests/${curr_test.id}`}
+							class="rounded-lg border bg-card p-2 text-card-foreground transition-all hover:cursor-pointer hover:bg-primary hover:text-primary-foreground"
+						>
+							{curr_test.id}
+						</a>
 					{/each}
 				</div>
 			{/if}

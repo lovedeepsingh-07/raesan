@@ -1,13 +1,7 @@
 use sqlx::sqlite;
 use std::str::FromStr;
-
-#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
-pub struct RaesanTest {
-    pub id: String,
-    pub created_at: i64,
-    pub total_questions: usize,
-    pub questions: Vec<String>,
-}
+// use rand::{self, seq::SliceRandom, Rng};
+use rand::RngExt;
 
 #[derive(Debug)]
 pub struct App {
@@ -83,7 +77,55 @@ impl App {
         &self,
         total_questions: usize,
         selected_chapters: Vec<String>,
-    ) -> Result<RaesanTest, error::Error> {
-        Ok(Default::default())
+    ) -> Result<schema::RaesanTest, error::Error> {
+        let mcq_count = {
+            let mut rng = rand::rng();
+            rng.random_range(1..=total_questions)
+        };
+        let integer_count = total_questions - mcq_count;
+
+        let mut questions: Vec<schema::Question> =
+            fetch_questions(&self.db_pool, &selected_chapters, "mcq", mcq_count as i64)
+                .await
+                .unwrap();
+        questions.extend(
+            fetch_questions(
+                &self.db_pool,
+                &selected_chapters,
+                "integer",
+                integer_count as i64,
+            )
+            .await
+            .unwrap(),
+        );
+
+        Ok(schema::RaesanTest {
+            id: uuid::Uuid::new_v4().to_string(),
+            created_at: chrono::Utc::now().timestamp(),
+            total_questions,
+            total_mcq_questions: mcq_count,
+            total_integer_questions: integer_count,
+            questions,
+        })
     }
+}
+
+async fn fetch_questions(
+    db_pool: &sqlite::SqlitePool,
+    selected_chapters: &[String],
+    question_type: &str,
+    question_limit: i64,
+) -> Result<Vec<schema::Question>, error::Error> {
+    let mut qb = sqlx::QueryBuilder::<sqlx::Sqlite>::new(format!(
+        r#"SELECT * FROM question WHERE question_type = '{}' AND chapter_id IN ("#,
+        question_type
+    ));
+    let mut separated = qb.separated(", ");
+    for curr_chapter_id in selected_chapters.iter() {
+        separated.push_bind(curr_chapter_id);
+    }
+    separated.push_unseparated(") LIMIT ");
+    qb.push_bind(question_limit);
+    let query = qb.build_query_as::<schema::Question>();
+    Ok(query.fetch_all(db_pool).await.unwrap())
 }

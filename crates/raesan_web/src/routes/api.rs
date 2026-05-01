@@ -3,6 +3,7 @@ use axum::response::IntoResponse;
 use std::sync::Arc;
 
 // GET /api/filter_metadata
+#[axum::debug_handler]
 pub async fn filter_metadata(
     axum::extract::State(server_state): axum::extract::State<Arc<state::ServerState>>,
 ) -> impl IntoResponse {
@@ -16,6 +17,7 @@ pub struct CreateTestData {
 }
 
 // POST /api/create_test
+#[axum::debug_handler]
 pub async fn create_test(
     axum::extract::State(server_state): axum::extract::State<Arc<state::ServerState>>,
     axum::extract::Json(create_test_data): axum::extract::Json<CreateTestData>,
@@ -33,6 +35,7 @@ pub async fn create_test(
 }
 
 // GET /api/chapter_data/{chapter_id}
+#[axum::debug_handler]
 pub async fn chapter_data(
     axum::extract::State(server_state): axum::extract::State<Arc<state::ServerState>>,
     axum::extract::Path(chapter_id): axum::extract::Path<String>,

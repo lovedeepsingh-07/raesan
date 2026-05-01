@@ -11,6 +11,5 @@ export const POST = async (server_utils) => {
 	});
 
 	const result = await response.json();
-	console.log(result);
-	return json({ status: "OK" });
+	return json({ status: "OK", test_data: result });
 };
