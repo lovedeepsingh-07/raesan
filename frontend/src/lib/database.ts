@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { RaesanTest } from "$sdk/models";
+import type { RaesanTest } from "$lib/models";
 
 export class Database extends Dexie {
 	test_list!: Table<RaesanTest, string>;

@@ -40,8 +40,6 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "@tauri-apps/api": "^2.10.1",
-    "@tauri-apps/plugin-opener": "^2.5.3",
     "dexie": "^4.4.2",
     "katex": "^0.16.45",
     "mode-watcher": "^1.1.0",

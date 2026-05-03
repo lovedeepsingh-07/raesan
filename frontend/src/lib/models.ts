@@ -25,6 +25,7 @@ export const ChapterModel = z.object({
 	id: z.uuidv4(),
 	subject_id: z.string(),
 	title: z.string(),
+	total_questions: z.number(),
 	questions: z.array(QuestionModel).default([])
 });
 export type Chapter = z.infer<typeof ChapterModel>;
@@ -33,6 +34,7 @@ export const SubjectModel = z.object({
 	id: z.uuidv4(),
 	exam_id: z.string(),
 	title: z.string(),
+	total_chapters: z.number(),
 	chapters: z.array(ChapterModel).default([])
 });
 export type Subject = z.infer<typeof SubjectModel>;
@@ -40,6 +42,7 @@ export type Subject = z.infer<typeof SubjectModel>;
 export const ExamModel = z.object({
 	id: z.uuidv4(),
 	title: z.string(),
+	total_subjects: z.number(),
 	subjects: z.array(SubjectModel).default([])
 });
 export type Exam = z.infer<typeof ExamModel>;

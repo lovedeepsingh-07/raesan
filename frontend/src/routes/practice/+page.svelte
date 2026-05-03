@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { SyncingAgentPopup } from "$components";
+	import type { PageProps } from "./$types";
+	import type { Exam, Subject, Chapter } from "$lib/models";
 
-	let { data, children } = $props();
+	let { data }: PageProps = $props();
 </script>
 
 {#await data.filter_metadata}
 	<SyncingAgentPopup />
-{:then filter_metadata}
+{:then filter_metadata: Array<Exam>}
 	<div class="mb-[120px] flex h-full w-full flex-col items-start justify-center gap-[32px]">
-		{#each filter_metadata as curr_exam}
-			{#each curr_exam.subjects as curr_subject}
+		{#each filter_metadata as curr_exam: Exam}
+			{#each curr_exam.subjects as curr_subject: Subject}
 				<div>
 					<p class="text-2xl font-bold">{curr_exam.title} - {curr_subject.title}</p>
 					<div

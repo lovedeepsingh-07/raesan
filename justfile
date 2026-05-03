@@ -2,7 +2,7 @@ build:
 	cargo tauri build
 
 run:
-	PUBLIC_APP_PLATFORM="native" cargo tauri dev
+	doppler run -- cargo tauri dev
 
 run_web:
 	doppler run -- cargo run -p raesan_web
@@ -21,9 +21,9 @@ run_web_docker:
 
 [working-directory: "frontend"]
 run_frontend:
-	PUBLIC_APP_PLATFORM="web" doppler run -- yarn run dev
+	doppler run -- yarn run dev
 build_frontend:
-	PUBLIC_APP_PLATFORM="web" yarn run build
+	yarn run build
 
 test:
 	@cargo test -p web_scraper -- --no-capture

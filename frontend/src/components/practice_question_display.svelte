@@ -1,16 +1,19 @@
 <script lang="ts">
 	import { Button } from "$components";
-	import { render_math } from "$sdk";
+	import { render_math } from "$lib";
+	import type { Question, QuestionOption } from "$lib/models";
 
-	let attempt_data: { attempted: boolean; attempted_option?: string } = $state({
+	let attempt_data: { attempted: boolean; attempted_option: string | undefined } = $state({
 		attempted: false,
 		attempted_option: undefined
 	});
+
 	$effect(() => {
 		curr_question_index;
 		attempt_data.attempted = false;
 		attempt_data.attempted_option = undefined;
 	});
+
 	const attempt_click = (curr_option_key: string) => {
 		attempt_data.attempted = true;
 		attempt_data.attempted_option = curr_option_key;
@@ -23,23 +26,24 @@
 		curr_question_index = $bindable()
 	}: {
 		chapter_id: string;
-		curr_question: any;
+		curr_question: Question;
 		total_questions: number;
 		curr_question_index: number;
 	} = $props();
 </script>
 
-{#snippet control_button(on_click, button_text)}
+{#snippet control_button(on_click: () => void, button_text: string)}
 	<Button
 		onclick={() => {
 			on_click();
-			localStorage.setItem(`${chapter_id}_curr_question_index`, curr_question_index);
+			localStorage.setItem(`${chapter_id}_curr_question_index`, String(curr_question_index));
 		}}
 		class="flex w-full max-w-[120px] items-center justify-center gap-[5px] bg-accent text-accent-foreground hover:bg-accent/80"
 		>{button_text}</Button
 	>
 {/snippet}
-{#snippet question_option(curr_option, question_answer)}
+
+{#snippet question_option(curr_option: QuestionOption, question_answer: string)}
 	{@const is_curr_option_attempted =
 		attempt_data.attempted && attempt_data.attempted_option == curr_option.key}
 	{@const is_curr_option_correct = curr_option.key == question_answer}
@@ -84,7 +88,7 @@
 			</div>
 			<div class="flex w-full flex-col items-start gap-[15px]">
 				<div class="flex w-full flex-col items-start gap-[8px]">
-					{#each curr_question.options as curr_option}
+					{#each curr_question.options as curr_option: QuestionOption}
 						{@render question_option(curr_option, curr_question.answer)}
 					{/each}
 				</div>

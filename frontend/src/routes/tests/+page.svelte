@@ -2,25 +2,27 @@
 	import { Button, SyncingAgentPopup } from "$components";
 	import { CirclePlus, ChevronUp, ChevronDown } from "@lucide/svelte";
 	import { db } from "$lib/database";
-	import type { RaesanTest } from "$sdk/models";
+	import type { RaesanTest } from "$lib/models";
 	import { goto } from "$app/navigation";
+	import type { PageProps } from "./$types";
+	import type { Exam, Subject, Chapter } from "$lib/models";
 
 	const MAX_QUESTIONS = 50;
 	const MIN_QUESTIONS = 10;
 	const MAX_CHAPTERS = 10;
 
-	let total_questions = $state(10);
+	let total_questions: number = $state(10);
 	let selected_chapters: Set<string> = $state(new Set());
 	let open_sections: Set<string> = $state(new Set());
 
-	let creating_test: bool = $state(false);
+	let creating_test: boolean = $state(false);
 
-	let { data, children } = $props();
+	let { data }: PageProps = $props();
 </script>
 
 {#await data.filter_metadata}
 	<SyncingAgentPopup />
-{:then filter_metadata}
+{:then filter_metadata: Array<Exam>}
 	<div class="fixed right-0 bottom-0 z-[40] p-4">
 		<Button
 			class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
@@ -34,7 +36,7 @@
 						selected_chapters: [...selected_chapters]
 					})
 				});
-				const data: RaesanTest = await res.json();
+				const data: { test_data: RaesanTest } = await res.json();
 				await db.test_list.add(data.test_data);
 				creating_test = false;
 				goto("/");
@@ -98,13 +100,13 @@
 				>
 			</div>
 		</div>
-		{#each filter_metadata as curr_exam}
-			{#each curr_exam.subjects as curr_subject}
+		{#each filter_metadata as curr_exam: Exam}
+			{#each curr_exam.subjects as curr_subject: Exam}
 				{@const is_section_open = open_sections.has(curr_subject.id)}
 				<div class="w-full">
 					<button
 						onclick={() => {
-							const set_copy = new Set(open_sections);
+							const set_copy: Set<string> = new Set(open_sections);
 							if (is_section_open) {
 								set_copy.delete(curr_subject.id);
 							} else {
@@ -127,7 +129,7 @@
 						<div
 							class="mt-[20px] grid w-full grid-cols-1 gap-[20px] px-4 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
 						>
-							{#each curr_subject.chapters as curr_chapter}
+							{#each curr_subject.chapters as curr_chapter: Chapter}
 								{@const is_selected = selected_chapters.has(curr_chapter.id)}
 								{@const is_disabled = !is_selected && selected_chapters.size >= MAX_CHAPTERS}
 								<label
@@ -138,7 +140,7 @@
 										checked={is_selected}
 										disabled={is_disabled}
 										onchange={() => {
-											const set_copy = new Set(selected_chapters);
+											const set_copy: Set<string> = new Set(selected_chapters);
 											if (set_copy.has(curr_chapter.id)) {
 												set_copy.delete(curr_chapter.id);
 											} else {
