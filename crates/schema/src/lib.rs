@@ -14,9 +14,20 @@ pub use question_type::QuestionType;
 pub use source_record::{EntityType, ScraperType, SourceRecord};
 pub use subject::Subject;
 
+#[allow(non_camel_case_types)]
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize, sqlx::FromRow)]
+pub struct RaesanTest_ChapterSummary {
+    pub chapter_id: String,
+    pub chapter_name: String,
+    pub subject_name: String,
+    pub exam_name: String,
+    pub question_count: i32,
+}
+
 #[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
 pub struct RaesanTest {
     pub id: String,
+    pub chapter_summaries: Vec<RaesanTest_ChapterSummary>,
     pub created_at: i64,
     pub total_questions: usize,
     pub total_mcq_questions: usize,

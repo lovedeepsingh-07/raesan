@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SyncingAgentPopup, PracticeQuestionDisplay } from "$components";
+	import { SyncingAgentPopup, QuestionDisplay } from "$components";
 	import { onMount } from "svelte";
 	import "katex/dist/katex.min.css";
 	import type { PageProps } from "./$types";
@@ -23,8 +23,8 @@
 		<p>No questions</p>
 	{:else}
 		{@const curr_question: Question = curr_chapter.questions[curr_question_index]}
-		<PracticeQuestionDisplay
-			chapter_id={data.chapter_id}
+		<QuestionDisplay
+			storage_id={`chapter_${curr_chapter.id}_curr_question_index`}
 			{curr_question}
 			total_questions={curr_chapter.total_questions}
 			bind:curr_question_index

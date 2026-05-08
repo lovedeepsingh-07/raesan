@@ -47,10 +47,20 @@ export const ExamModel = z.object({
 });
 export type Exam = z.infer<typeof ExamModel>;
 
+export const RaesanTest_ChapterSummaryModel = z.object({
+	chapter_id: z.uuidv4().default(""),
+	chapter_name: z.string().default(""),
+	subject_name: z.string().default(""),
+	exam_name: z.string().default(""),
+	question_count: z.number().default(0)
+});
+export type RaesanTest_ChapterSummary = z.infer<typeof RaesanTest_ChapterSummaryModel>;
+
 export const RaesanTestModel = z.object({
-	id: z.uuidv4(),
+	id: z.uuidv4().default(""),
+	chapter_summaries: z.array(RaesanTest_ChapterSummaryModel).default([]),
 	created_at: z.number().int().default(0),
-	total_question: z.number().int().default(10),
+	total_questions: z.number().int().default(10),
 	total_mcq_questions: z.number().int().default(1),
 	total_integer_questions: z.number().int().default(1),
 	questions: z.array(QuestionModel).default([])

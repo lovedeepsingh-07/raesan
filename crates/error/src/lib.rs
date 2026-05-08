@@ -35,7 +35,6 @@ define_error!(
     SerializeError,
     DeserializeError,
     BoaEngineError,
-    TauriError,
     AlreadyRunningError,
     DatabaseError,
     ChannelError,
@@ -61,12 +60,6 @@ impl From<std::io::Error> for Error {
 impl From<serde_json::Error> for Error {
     fn from(value: serde_json::Error) -> Self {
         Error::DeserializeError(value.to_string())
-    }
-}
-#[cfg(feature = "tauri")]
-impl From<tauri::Error> for Error {
-    fn from(value: tauri::Error) -> Self {
-        Error::TauriError(value.to_string())
     }
 }
 #[cfg(feature = "reqwest")]

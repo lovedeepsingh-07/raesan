@@ -1,7 +1,7 @@
-use sqlx::sqlite;
-use std::str::FromStr;
-// use rand::{self, seq::SliceRandom, Rng};
 use rand::RngExt;
+use sqlx::{Row, sqlite};
+use std::collections::HashMap;
+use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct App {
@@ -99,9 +99,12 @@ impl App {
             .unwrap(),
         );
 
+        let chapter_summaries = get_chapter_summaries(&questions, &self.db_pool).await?;
+
         Ok(schema::RaesanTest {
             id: uuid::Uuid::new_v4().to_string(),
-            created_at: chrono::Utc::now().timestamp(),
+            chapter_summaries,
+            created_at: chrono::Utc::now().timestamp_millis(),
             total_questions,
             total_mcq_questions: mcq_count,
             total_integer_questions: integer_count,
@@ -124,8 +127,48 @@ async fn fetch_questions(
     for curr_chapter_id in selected_chapters.iter() {
         separated.push_bind(curr_chapter_id);
     }
-    separated.push_unseparated(") LIMIT ");
+    separated.push_unseparated(") ORDER BY RANDOM() LIMIT ");
     qb.push_bind(question_limit);
     let query = qb.build_query_as::<schema::Question>();
     Ok(query.fetch_all(db_pool).await.unwrap())
+}
+
+async fn get_chapter_summaries(
+    questions: &[schema::Question],
+    db_pool: &sqlite::SqlitePool,
+) -> Result<Vec<schema::RaesanTest_ChapterSummary>, error::Error> {
+    let mut questions_per_chapters: HashMap<String, i32> = HashMap::new();
+    for q in questions.iter() {
+        *questions_per_chapters.entry(q.chapter_id.clone()).or_insert(0) += 1;
+    }
+
+    let mut out = Vec::new();
+    for (chapter_id, question_count) in questions_per_chapters {
+        let row = sqlx::query(
+            r#"
+            SELECT c.title as chapter_title,
+                   s.title as subject_title,
+                   e.title as exam_title
+            FROM chapter c
+            JOIN subject s ON c.subject_id = s.id
+            JOIN exam e ON s.exam_id = e.id
+            WHERE c.id = $1
+            "#,
+        )
+        .bind(&chapter_id)
+        .fetch_one(db_pool)
+        .await?;
+
+        out.push(schema::RaesanTest_ChapterSummary {
+            chapter_id,
+            chapter_name: row.get("chapter_title"),
+            subject_name: row.get("subject_title"),
+            exam_name: row.get("exam_title"),
+            question_count,
+        });
+    }
+
+    // Sort descending by count so the frontend gets them pre-ranked
+    out.sort_by(|a, b| b.question_count.cmp(&a.question_count));
+    Ok(out)
 }

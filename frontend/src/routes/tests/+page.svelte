@@ -20,6 +20,66 @@
 	let { data }: PageProps = $props();
 </script>
 
+{#snippet chapter_checkbox(is_selected: boolean, is_disabled: boolean, curr_chapter: Chapter)}
+	<label
+		class={`flex min-h-[60px] w-full flex-col items-start rounded-lg border bg-card p-2 text-card-foreground ${is_disabled ? "bg-muted text-muted-foreground" : "hover:cursor-pointer hover:bg-secondary hover:text-secondary-foreground"}`}
+	>
+		<input
+			type="checkbox"
+			checked={is_selected}
+			disabled={is_disabled}
+			onchange={() => {
+				const set_copy: Set<string> = new Set(selected_chapters);
+				if (set_copy.has(curr_chapter.id)) {
+					set_copy.delete(curr_chapter.id);
+				} else {
+					if (set_copy.size >= MAX_CHAPTERS) return;
+					set_copy.add(curr_chapter.id);
+				}
+				selected_chapters = set_copy;
+			}}
+		/>
+		<p>{curr_chapter.title}</p>
+	</label>
+{/snippet}
+
+{#snippet subject_section(is_section_open: boolean, curr_exam: Exam, curr_subject: Subject)}
+	<div class="w-full">
+		<button
+			onclick={() => {
+				const set_copy: Set<string> = new Set(open_sections);
+				if (is_section_open) {
+					set_copy.delete(curr_subject.id);
+				} else {
+					set_copy.add(curr_subject.id);
+				}
+				open_sections = set_copy;
+			}}
+			class="flex items-center justify-between gap-[20px] max-sm:w-full sm:justify-start"
+		>
+			<p class="text-2xl font-bold">{curr_exam.title} - {curr_subject.title}</p>
+			<Button class="rounded-lg hover:bg-muted">
+				{#if is_section_open}
+					<ChevronUp />
+				{:else}
+					<ChevronDown />
+				{/if}
+			</Button>
+		</button>
+		{#if is_section_open}
+			<div
+				class="mt-[20px] grid w-full grid-cols-1 gap-[20px] px-4 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+			>
+				{#each curr_subject.chapters as curr_chapter: Chapter}
+					{@const is_selected = selected_chapters.has(curr_chapter.id)}
+					{@const is_disabled = !is_selected && selected_chapters.size >= MAX_CHAPTERS}
+					{@render chapter_checkbox(is_selected, is_disabled, curr_chapter)}
+				{/each}
+			</div>
+		{/if}
+	</div>
+{/snippet}
+
 {#await data.filter_metadata}
 	<SyncingAgentPopup />
 {:then filter_metadata: Array<Exam>}
@@ -103,59 +163,7 @@
 		{#each filter_metadata as curr_exam: Exam}
 			{#each curr_exam.subjects as curr_subject: Exam}
 				{@const is_section_open = open_sections.has(curr_subject.id)}
-				<div class="w-full">
-					<button
-						onclick={() => {
-							const set_copy: Set<string> = new Set(open_sections);
-							if (is_section_open) {
-								set_copy.delete(curr_subject.id);
-							} else {
-								set_copy.add(curr_subject.id);
-							}
-							open_sections = set_copy;
-						}}
-						class="flex items-center justify-between gap-[20px] max-sm:w-full sm:justify-start"
-					>
-						<p class="text-2xl font-bold">{curr_exam.title} - {curr_subject.title}</p>
-						<Button class="rounded-lg hover:bg-muted">
-							{#if is_section_open}
-								<ChevronUp />
-							{:else}
-								<ChevronDown />
-							{/if}
-						</Button>
-					</button>
-					{#if is_section_open}
-						<div
-							class="mt-[20px] grid w-full grid-cols-1 gap-[20px] px-4 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-						>
-							{#each curr_subject.chapters as curr_chapter: Chapter}
-								{@const is_selected = selected_chapters.has(curr_chapter.id)}
-								{@const is_disabled = !is_selected && selected_chapters.size >= MAX_CHAPTERS}
-								<label
-									class={`flex min-h-[60px] w-full flex-col items-start rounded-lg border bg-card p-2 text-card-foreground ${is_disabled ? "bg-muted text-muted-foreground" : "hover:cursor-pointer hover:bg-secondary hover:text-secondary-foreground"}`}
-								>
-									<input
-										type="checkbox"
-										checked={is_selected}
-										disabled={is_disabled}
-										onchange={() => {
-											const set_copy: Set<string> = new Set(selected_chapters);
-											if (set_copy.has(curr_chapter.id)) {
-												set_copy.delete(curr_chapter.id);
-											} else {
-												if (set_copy.size >= MAX_CHAPTERS) return;
-												set_copy.add(curr_chapter.id);
-											}
-											selected_chapters = set_copy;
-										}}
-									/>
-									<p>{curr_chapter.title}</p>
-								</label>
-							{/each}
-						</div>
-					{/if}
-				</div>
+				{@render subject_section(is_section_open, curr_exam, curr_subject)}
 			{/each}
 		{/each}
 	</div>

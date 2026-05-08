@@ -20,12 +20,12 @@
 	};
 
 	let {
-		chapter_id,
+		storage_id,
 		curr_question,
 		total_questions,
 		curr_question_index = $bindable()
 	}: {
-		chapter_id: string;
+		storage_id: string;
 		curr_question: Question;
 		total_questions: number;
 		curr_question_index: number;
@@ -36,7 +36,7 @@
 	<Button
 		onclick={() => {
 			on_click();
-			localStorage.setItem(`${chapter_id}_curr_question_index`, String(curr_question_index));
+			localStorage.setItem(storage_id, String(curr_question_index));
 		}}
 		class="flex w-full max-w-[120px] items-center justify-center gap-[5px] bg-accent text-accent-foreground hover:bg-accent/80"
 		>{button_text}</Button

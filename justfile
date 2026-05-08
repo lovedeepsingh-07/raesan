@@ -2,12 +2,9 @@ build:
 	cargo tauri build
 
 run:
-	doppler run -- cargo tauri dev
-
-run_web:
 	doppler run -- cargo run -p raesan_web
 
-run_web_docker:
+run_docker:
 	nix build .#web_docker --print-build-logs
 	sudo docker load < result
 	id=$(sudo docker create raesan_web:latest) && \
@@ -26,7 +23,7 @@ build_frontend:
 	yarn run build
 
 test:
-	@cargo test -p web_scraper -- --no-capture
+	@cargo test -p raesan -- --no-capture
 
 lint:
 	@cargo clippy -- \
