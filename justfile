@@ -1,26 +1,25 @@
-build:
-	cargo tauri build
-
 run:
 	doppler run -- cargo run -p raesan_web
 
-run_docker:
+build_docker:
 	nix build .#web_docker --print-build-logs
 	sudo docker load < result
-	id=$(sudo docker create raesan_web:latest) && \
+	id=$(sudo docker create raesan:latest) && \
 			sudo docker cp ./raesan.db $id:/raesan.db && \
-			sudo docker commit $id raesan_web:latest && \
+			sudo docker commit $id raesan && \
 			sudo docker rm $id
+
+run_docker:
 	sudo docker run -p 8080:8080 \
 			-e FRONTEND_URL="https://raesan.pages.dev" \
 			-e PUBLIC_APP_ENV="production" \
-			raesan_web:latest
+			raesan:latest
 
+build_frontend:
+	yarn run build
 [working-directory: "frontend"]
 run_frontend:
 	doppler run -- yarn run dev
-build_frontend:
-	yarn run build
 
 test:
 	@cargo test -p raesan -- --no-capture

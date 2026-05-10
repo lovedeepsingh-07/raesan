@@ -4,8 +4,6 @@
   gitignore,
   yarn_berry,
   zip,
-  PUBLIC_APP_PLATFORM ? "web",
-  PUBLIC_API_URL ? "http://localhost:8080",
 }: let
   src = gitignore.lib.gitignoreSource frontend_src;
   package_json = builtins.fromJSON (builtins.readFile "${src}/package.json");
@@ -24,15 +22,14 @@ in
     offlineCache = yarn_berry.fetchYarnBerryDeps {
       inherit src;
       missingHashes = missing_hashes;
-      hash = "sha256-m2BiDHTiT2YJSHdpnI3CNmcu/zktEyXYdvWO8wRxFGI=";
+      hash = "sha256-rLFJBTcJfwkUn1iOMbyimyjYhaFnr9i4/6ZUip7dbUI=";
     };
-    inherit PUBLIC_APP_PLATFORM PUBLIC_API_URL;
     buildPhase = ''
       yarn run build
     '';
     installPhase = ''
          mkdir -p $out/dist $out/zip
-         cp -R build/* $out/dist/
+         cp -r .svelte-kit/cloudflare/* $out/dist/
          cd $out/dist/
       zip -r $out/zip/${pname}-${version}.zip .
     '';

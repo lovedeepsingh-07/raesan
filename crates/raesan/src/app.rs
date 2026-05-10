@@ -139,7 +139,9 @@ async fn get_chapter_summaries(
 ) -> Result<Vec<schema::RaesanTest_ChapterSummary>, error::Error> {
     let mut questions_per_chapters: HashMap<String, i32> = HashMap::new();
     for q in questions.iter() {
-        *questions_per_chapters.entry(q.chapter_id.clone()).or_insert(0) += 1;
+        *questions_per_chapters
+            .entry(q.chapter_id.clone())
+            .or_insert(0) += 1;
     }
 
     let mut out = Vec::new();

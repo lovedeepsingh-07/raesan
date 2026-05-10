@@ -32,7 +32,7 @@ in rec {
       cargoArtifacts = cargo_artifacts;
     });
   docker = dockerTools.buildLayeredImage {
-    name = package_name;
+    name = "raesan";
     tag = "latest";
     contents = [
       cacert

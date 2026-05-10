@@ -48,10 +48,10 @@ in rec {
     version = package_version;
     nativeBuildInputs = [pkgs.zip web_scraper web frontend];
     installPhase = ''
-      mkdir -p $out
-      cp -r ${web_scraper}/bin/* $out/
-      cp -r ${web}/bin/* $out/
-      cp -r ${frontend}/zip/* $out/
+      mkdir -p $out/web_scraper $out/web $out/frontend
+      cp -r ${web_scraper}/bin/* $out/web_scraper/
+      cp -r ${web}/bin/* $out/web/
+      cp -r ${frontend}/dist/* $out/frontend/
     '';
   };
 }
