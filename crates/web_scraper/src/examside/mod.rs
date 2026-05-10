@@ -1,3 +1,4 @@
+pub mod content_cleaner;
 pub mod from_json;
 pub mod pages;
 
@@ -22,21 +23,36 @@ impl ExamSide {
     ];
 }
 
+// how this scraper is implemented is:
+// - first of all we go through all the "FETCH_PATHS"
+// - every fetch is an exam page that contains data about it's subjects and chapters, we fetch the
+// exam page, and extract data from it using "pages::exam_page::extract", that function populates
+// the database with Exam, Subjects, and Chapters using the data from that exam page, and it
+// returns the exam that it fetched
+// - then we fetch all the subjects from the database that belong to that exam
+// - we go through each of those subjects and get their "record" from the database, it's like a key that represents
+// that subject on that website, so basically "Physics" would have a record of "physics", it can be
+// anything from a simple slug to a UUID, this record was inserted into the database along with the
+// subject
+// - then we fetch all the subjects from the database that belong to that subject
+// - then we go through each of those chapters and get their "record" from the database
+// - after that, create a "chapter_fetch_url" that points to the chapter page on that website,
+// because for this website all the questions are on the chapter page
+// - once we have the chapter page url, we fetch the page and extract the data using the
+// "pages::chapter_page::extract" function, that function populates the database with all the
+// Questions from that exam
 impl crate::Scraper for ExamSide {
-    const BASE_URL: &str = "https://questions.examside.com";
     async fn scrape(
+        base_url: &str,
         db_pool: &sqlx::Pool<sqlx::Sqlite>,
         log_tx: mpsc::Sender<crate::ScraperLog>,
     ) -> Result<(), error::Error> {
-        // TODO
-        let _ = log_tx;
         for exam_path in Self::FETCH_PATHS {
-            let exam_page_metadata = pages::metadata::extract(
-                &format!("{}/{}", Self::BASE_URL, exam_path),
-                log_tx.clone(),
-            )
-            .await?;
-            let curr_exam = pages::exam_page::extract(db_pool, &exam_page_metadata).await?;
+            let exam_page_metadata =
+                pages::metadata::extract(&format!("{}/{}", base_url, exam_path), log_tx.clone())
+                    .await?;
+            let curr_exam =
+                pages::exam_page::extract(db_pool, log_tx.clone(), &exam_page_metadata).await?;
 
             let subjects: Vec<schema::Subject> =
                 sqlx::query_as::<_, schema::Subject>("SELECT * FROM subject WHERE exam_id = $1")
@@ -69,21 +85,20 @@ impl crate::Scraper for ExamSide {
                         .fetch_one(db_pool)
                         .await?;
 
-                    let chapter_fetch_path = format!(
-                        "{}/{}/{}/{}",
-                        Self::BASE_URL,
-                        exam_path,
-                        subject_record.source_key,
-                        chapter_record.source_key
-                    );
                     log_tx
                         .send(crate::ScraperLog::Info(format!(
                             "Fetching page data for (exam/subject/chapter): {}/{}/{}",
                             curr_exam.title, curr_subject.title, curr_chapter.title
                         )))
                         .await?;
+
+                    let chapter_fetch_url = format!(
+                        "{}/{}/{}/{}",
+                        base_url, exam_path, subject_record.source_key, chapter_record.source_key
+                    );
                     let chapter_page_metadata =
-                        pages::metadata::extract(&chapter_fetch_path, log_tx.clone()).await?;
+                        pages::metadata::extract(&chapter_fetch_url, log_tx.clone()).await?;
+
                     pages::chapter_page::extract(
                         db_pool,
                         log_tx.clone(),

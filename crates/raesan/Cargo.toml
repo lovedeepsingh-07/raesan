@@ -4,11 +4,14 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+chrono = { workspace = true }
 env_logger = { workspace = true }
 error = { path = "../error", default-features = false, features = ["sqlx"] }
-# serde = { workspace = true }
-# serde_json = { workspace = true }
+rand = { workspace = true }
+serde = { workspace = true }
 log = { workspace = true }
+rstest = { workspace = true }
+schema = { path = "../schema" }
 sqlx = { workspace = true }
 tokio = { workspace = true }
-# web_scraper = { path = "../web_scraper" }
+uuid = { workspace = true }

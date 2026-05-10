@@ -4,15 +4,20 @@ version = { workspace = true }
 edition = { workspace = true }
 
 [dependencies]
+ammonia = { workspace = true }
 boa_engine = { workspace = true }
 error = { path = "../error", features = [
-  "reqwest",
   "boa_engine",
+  "reqwest",
   "scraper",
+  "sqlx",
   "tokio",
 ] }
 env_logger = { workspace = true }
 log = { workspace = true }
+once_cell = { workspace = true }
+raesan = { path = "../raesan" }
+regex = { workspace = true }
 reqwest = { workspace = true }
 ron = { workspace = true }
 rstest = { workspace = true }

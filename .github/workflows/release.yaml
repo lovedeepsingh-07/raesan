@@ -2,19 +2,90 @@ name: Release
 on:
   push:
     tags: ["v*"]
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  EXAMSIDE_BASE_URL: ${{ secrets.EXAMSIDE_BASE_URL }}
+  FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+  DOCKER_IMAGE_NAME: raesan
 permissions:
   contents: write
+  packages: write
 jobs:
-  release:
+  frontend:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install nix
-        uses: cachix/install-nix-action@v31
-      - name: Build release artifacts
-        run: nix build .#release
-      - name: Upload release artifacts
-        uses: softprops/action-gh-release@v2
+        uses: actions/checkout@v6
+      # Setup Nix
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+      # Build Frontend
+      - name: Build Frontend
+        run: nix build .#frontend
+      # Cloudlfare pages deployment
+      - run: |
+          mkdir -p build
+          cp -r result/dist/* result/dist/.* build/
+      - name: Deploy to Cloudlfare Pages
+        uses: cloudflare/wrangler-action@v3
         with:
-          files: result/*.zip
+          wranglerVersion: "4.57.0"
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy --branch=main --commit-dirty=true
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      # Setup Nix
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - name: Setup Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@main
+      # Build the web scraper and populate the raesan.db database using it
+      - name: Build Web Scraper
+        run: nix build .#web_scraper
+      - name: Populate Database
+        run: result/bin/raesan_web_scraper
+      # Container registry setup
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      # Build the docker image
+      - name: Build base Nix Docker Image
+        run: |
+          nix build .#web_docker --print-build-logs
+          docker load < result
+      - name: Commit populated database to docker image
+        run: |
+          id=$(docker create $DOCKER_IMAGE_NAME:latest)
+          docker cp ./raesan.db $id:/raesan.db
+          docker commit $id ${{ env.DOCKER_IMAGE_NAME }}:latest
+          docker rm $id
+      # Extract metadata for the publishing the docker image
+      - name: Extract metadata for Docker
+        id: docker_image_metadata
+        uses: docker/metadata-action@v6
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.DOCKER_IMAGE_NAME }}
+          tags: |
+            type=sha
+            latest
+      # Tag the built docker images
+      - name: Tag docker images
+        run: |
+          while read curr_tag; do
+            docker tag $DOCKER_IMAGE_NAME:latest "$curr_tag"
+          done <<< "${{ steps.docker_image_metadata.outputs.tags }}"
+      # Push the docker images to container registry
+      - name: Push docker images
+        run: |
+          while read curr_tag; do
+            docker push "$curr_tag"
+          done <<< "${{ steps.docker_image_metadata.outputs.tags }}"

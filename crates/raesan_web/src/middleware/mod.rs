@@ -7,8 +7,9 @@ pub async fn latency_simulator(
     request: axum::extract::Request,
     next: axum::middleware::Next,
 ) -> axum::response::Response {
-    if server_state.app_env == state::Environment::DEV {
-        tokio::time::sleep(std::time::Duration::from_secs(5)).await;
+    if server_state.app.env == raesan::Environment::DEV {
+        log::debug!("Simulating Latency");
+        // tokio::time::sleep(std::time::Duration::from_millis(3000)).await;
     }
     next.run(request).await
 }

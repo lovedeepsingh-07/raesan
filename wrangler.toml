@@ -1,0 +1,4 @@
+name = "raesan"
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2026-01-03"
+pages_build_output_dir = "build/.svelte-kit/cloudflare"

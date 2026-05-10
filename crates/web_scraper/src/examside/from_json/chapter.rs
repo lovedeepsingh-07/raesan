@@ -35,9 +35,10 @@ pub async fn from_json(
             )
         })?
         .to_string();
+
     sqlx::query(schema::Chapter::INSERT_QUERY)
         .bind(&chapter_id)
-        .bind(&subject_id)
+        .bind(subject_id)
         .bind(&chapter_title)
         .execute(db_pool)
         .await?;

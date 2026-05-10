@@ -1,12 +1,12 @@
-use std::collections::HashMap;
+use crate::examside;
 
 pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
     json: &serde_json::Value,
     question_id: &str,
     question_type: &schema::QuestionType,
-) -> Result<HashMap<String, schema::QuestionOption>, error::Error> {
-    let mut output = HashMap::new();
+) -> Result<Vec<schema::QuestionOption>, examside::QuestionResult> {
+    let mut output: Vec<schema::QuestionOption> = Vec::new();
 
     if *question_type != schema::QuestionType::MCQ {
         return Ok(output);
@@ -57,23 +57,32 @@ pub async fn from_json(
             })?
             .to_string();
 
+        // I cannot host pictures right now, so it would be the best idea to only store
+        // non-picture based questions for now, hence we filter all the picture based questions
+        if option_value.contains("https")
+            || option_value.contains("jpg")
+            || option_value.contains("jpeg")
+        {
+            return Err(examside::QuestionResult::Filtered);
+        }
+
+        let cleaned_option_value = examside::content_cleaner::clean(&option_value).await?;
+
         sqlx::query(schema::QuestionOption::INSERT_QUERY)
             .bind(&question_option_id)
-            .bind(&question_id)
+            .bind(question_id)
             .bind(&option_key)
-            .bind(&option_value)
+            .bind(&cleaned_option_value)
             .execute(db_pool)
-            .await?;
+            .await
+            .map_err(|e| examside::QuestionResult::Error(error::Error::from(e)))?;
 
-        output.insert(
-            option_key.clone(),
-            schema::QuestionOption {
-                id: question_option_id,
-                question_id: question_id.to_string(),
-                key: option_key,
-                value: option_value,
-            },
-        );
+        output.push(schema::QuestionOption {
+            id: question_option_id,
+            question_id: question_id.to_string(),
+            key: option_key,
+            value: cleaned_option_value,
+        });
     }
 
     Ok(output)

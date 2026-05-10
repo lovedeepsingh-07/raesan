@@ -1,21 +1,28 @@
-export PUBLIC_APP_ENV := "development"
-export PUBLIC_FRONTEND_URL := "https://raesan.pages.dev"
-export PUBLIC_API_URL := "http://localhost:8080"
-
-build:
-	cargo tauri build
-
 run:
-	PUBLIC_APP_PLATFORM="native" cargo tauri dev
+	doppler run -- cargo run -p raesan_web
 
-run_web:
-	cargo run -p raesan_web
+build_docker:
+	nix build .#web_docker --print-build-logs
+	sudo docker load < result
+	id=$(sudo docker create raesan:latest) && \
+			sudo docker cp ./raesan.db $id:/raesan.db && \
+			sudo docker commit $id raesan && \
+			sudo docker rm $id
 
+run_docker:
+	sudo docker run -p 8080:8080 \
+			-e FRONTEND_URL="https://raesan.pages.dev" \
+			-e PUBLIC_APP_ENV="production" \
+			raesan:latest
+
+build_frontend:
+	yarn run build
+[working-directory: "frontend"]
 run_frontend:
-	PUBLIC_APP_PLATFORM="web" bun run dev
+	doppler run -- yarn run dev
 
 test:
-	cargo test -- --no-capture
+	@cargo test -p raesan -- --no-capture
 
 lint:
 	@cargo clippy -- \
@@ -25,4 +32,3 @@ lint:
 fmt:
 	@alejandra .
 	@cargo fmt
-
