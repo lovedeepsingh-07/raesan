@@ -6,9 +6,13 @@ export class Database extends Dexie {
 
 	constructor() {
 		super("raesan_tests");
-		this.version(1).stores({
-			test_list: "id"
-		});
+		this.version(2)
+			.stores({
+				test_list: "id"
+			})
+			.upgrade(async (tx) => {
+				await tx.table("test_list").clear();
+			});
 	}
 }
 

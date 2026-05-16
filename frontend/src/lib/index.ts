@@ -2,6 +2,7 @@ import katex from "katex";
 import { unified } from "unified";
 import rehypeParse from "rehype-parse";
 import rehypeStringify from "rehype-stringify";
+import package_json from "../../package.json";
 
 export const render_math = (input: string): string => {
 	const with_math = input
@@ -28,3 +29,5 @@ export const get_date_string = (input_date: Date): string => {
 	return `${weekdays[input_date.getDay()]}, ${input_date.getDate()}/${input_date.getMonth()}/${input_date.getFullYear()},
 					${input_date.getHours()}:${input_date.getMinutes()}:${input_date.getSeconds()}`;
 };
+
+export const version = package_json.version;

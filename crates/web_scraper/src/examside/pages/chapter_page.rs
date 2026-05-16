@@ -90,7 +90,13 @@ pub async fn extract(
                         examside::QuestionResult::MissingAnswer => {
                             log_tx.send(crate::ScraperLog::Warn("Failed to deserialize question because of a missing answer, skipping entirely".to_string())).await?;
                         }
-                        examside::QuestionResult::Filtered => {}
+                        examside::QuestionResult::Filtered => {
+                            log_tx
+                                .send(crate::ScraperLog::Warn(
+                                    "Found an image, skipping entirely".to_string(),
+                                ))
+                                .await?;
+                        }
                     };
                     continue;
                 }

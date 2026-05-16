@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CirclePlus, NotebookPen, Trash2 } from "@lucide/svelte";
+	import { env } from "$env/dynamic/public";
 	import { Button, Tooltip } from "$components";
 	import type { RaesanTest, RaesanTest_ChapterSummary } from "$lib/models";
 	import { RaesanTestModel } from "$lib/models";
@@ -14,6 +15,13 @@
 		test_list = await z.array(RaesanTestModel).parseAsync(await db.test_list.toArray());
 	});
 
+	const get_test_display_name = (curr_test: RaesanTest): string => {
+		if (curr_test.chapter_summaries.length > 1) {
+			return `${curr_test.chapter_summaries[0].chapter_name}, ${curr_test.chapter_summaries[1].chapter_name}...`;
+		} else {
+			return curr_test.chapter_summaries[0].chapter_name;
+		}
+	};
 	const get_full_test_name = (curr_test: RaesanTest): string => {
 		let out = "";
 		for (let i = 0; i < curr_test.chapter_summaries.length; i++) {
@@ -27,7 +35,7 @@
 </script>
 
 {#snippet raesan_test(curr_test: RaesanTest)}
-	{@const display_test_name = `${curr_test.chapter_summaries[0].chapter_name}, ${curr_test.chapter_summaries[1].chapter_name}...`}
+	{@const display_test_name = get_test_display_name(curr_test)}
 	{@const full_test_name = get_full_test_name(curr_test)}
 	<div
 		class="flex items-start justify-center gap-[4px] rounded-lg border bg-card p-2"
@@ -75,6 +83,23 @@
 	<div class="fond-bold flex items-center gap-[8px] text-5xl max-sm:flex-col max-sm:items-start">
 		<p class="">Welcome to</p>
 		<p class="font-serif font-normal italic underline decoration-secondary">raesan</p>
+	</div>
+	<div
+		class="w-fit rounded-lg border border-destructive bg-muted p-2 text-sm text-muted-foreground"
+	>
+		<p>This project is currently under semi-active development.</p>
+		<p>
+			If you want to give your feedback, go to the
+			<a class="text-secondary-foreground underline" href={env.PUBLIC_DISCORD_SERVER_URL}
+				>discord server</a
+			>.
+		</p>
+		<p>
+			Follow me on <a
+				class="text-secondary-foreground underline"
+				href="https://github.com/lovedeepsingh-07">github</a
+			> too if you want.
+		</p>
 	</div>
 	<div class="flex flex-col gap-[20px]">
 		<div class="justify-left flex items-start max-xs:flex-col xs:gap-[10px]">

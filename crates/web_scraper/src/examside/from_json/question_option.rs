@@ -1,4 +1,4 @@
-use crate::examside;
+use crate::{examside, utils};
 
 pub async fn from_json(
     db_pool: &sqlx::Pool<sqlx::Sqlite>,
@@ -59,10 +59,7 @@ pub async fn from_json(
 
         // I cannot host pictures right now, so it would be the best idea to only store
         // non-picture based questions for now, hence we filter all the picture based questions
-        if option_value.contains("https")
-            || option_value.contains("jpg")
-            || option_value.contains("jpeg")
-        {
+        if utils::contains_image(option_value.as_str()) {
             return Err(examside::QuestionResult::Filtered);
         }
 

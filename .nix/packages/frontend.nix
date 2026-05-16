@@ -22,8 +22,9 @@ in
     offlineCache = yarn_berry.fetchYarnBerryDeps {
       inherit src;
       missingHashes = missing_hashes;
-      hash = "sha256-7l2aZehmI4FmCnuMTDeNDQd7DhxxCTyUgilZ7U1U8zc=";
+      hash = "sha256-lup+WJtAjGtczuhIJSC2KvgJDJ32vkuJ6bcHtQUt7m0=";
     };
+	NIX_BUILD = true;
     buildPhase = ''
       yarn run build
     '';
