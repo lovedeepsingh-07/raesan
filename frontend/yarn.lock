@@ -61,9 +61,9 @@ __metadata:
   linkType: hard
 
 "@cloudflare/workers-types@npm:^4.20250507.0":
-  version: 4.20260510.1
-  resolution: "@cloudflare/workers-types@npm:4.20260510.1"
-  checksum: 10c0/81d5759692cfde267ecd4f7814bb37fd23f0ce37394ae00d9fcd85865725a912aebacc7414bc3bfe795ae5573e447843ea20016fca7077de939fdd0609d9b68e
+  version: 4.20260516.1
+  resolution: "@cloudflare/workers-types@npm:4.20260516.1"
+  checksum: 10c0/e329981e8c5f46eeb071eace13b090ddc6d424dfa1b697656187435f908567c0349cb62db88dcc9f80f9c90a662369475795550f5413e2d4bd7253feb0eb165a
   languageName: node
   linkType: hard
 
@@ -1205,6 +1205,15 @@ __metadata:
   peerDependencies:
     acorn: ^8.9.0
   checksum: 10c0/3b39f4ba0d364cc510061acbd5ea3cf45bb07478c7a4d34888d0bf6b5b558b9165f425c8840a280b5494feb2b7f213bb4cc0be743b8f1e31976fe2e05518b55a
+  languageName: node
+  linkType: hard
+
+"@sveltejs/adapter-auto@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "@sveltejs/adapter-auto@npm:7.0.1"
+  peerDependencies:
+    "@sveltejs/kit": ^2.0.0
+  checksum: 10c0/b4d76a432cc077a0f5fb684dc83471676e7f4f0704e7350d18ebbdf8a69726e5f8ca7ebc709d06f6598725ac0a749c396d466f03095005d919ce97bc97324f50
   languageName: node
   linkType: hard
 
@@ -3383,6 +3392,7 @@ __metadata:
     "@eslint/js": "npm:^9.39.2"
     "@lucide/svelte": "npm:^0.577.0"
     "@skeletonlabs/floating-ui-svelte": "npm:^0.3.9"
+    "@sveltejs/adapter-auto": "npm:^7.0.1"
     "@sveltejs/adapter-cloudflare": "npm:^7.2.8"
     "@sveltejs/kit": "npm:^2.50.2"
     "@sveltejs/vite-plugin-svelte": "npm:^6.2.4"

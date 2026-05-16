@@ -1,4 +1,5 @@
 use rand::RngExt;
+use rand::seq::SliceRandom;
 use sqlx::{Row, sqlite};
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -85,9 +86,7 @@ impl App {
         let integer_count = total_questions - mcq_count;
 
         let mut questions: Vec<schema::Question> =
-            fetch_questions(&self.db_pool, &selected_chapters, "mcq", mcq_count as i64)
-                .await
-                .unwrap();
+            fetch_questions(&self.db_pool, &selected_chapters, "mcq", mcq_count as i64).await?;
         questions.extend(
             fetch_questions(
                 &self.db_pool,
@@ -95,11 +94,13 @@ impl App {
                 "integer",
                 integer_count as i64,
             )
-            .await
-            .unwrap(),
+            .await?,
         );
 
         let chapter_summaries = get_chapter_summaries(&questions, &self.db_pool).await?;
+
+        // shuffle the questions before send the response
+        questions.shuffle(&mut rand::rng());
 
         Ok(schema::RaesanTest {
             id: uuid::Uuid::new_v4().to_string(),
@@ -129,8 +130,19 @@ async fn fetch_questions(
     }
     separated.push_unseparated(") ORDER BY RANDOM() LIMIT ");
     qb.push_bind(question_limit);
-    let query = qb.build_query_as::<schema::Question>();
-    Ok(query.fetch_all(db_pool).await.unwrap())
+    let mut questions: Vec<schema::Question> = qb
+        .build_query_as::<schema::Question>()
+        .fetch_all(db_pool)
+        .await?;
+    for curr_question in questions.iter_mut() {
+        curr_question.options = sqlx::query_as::<_, schema::QuestionOption>(
+            "SELECT * FROM question_option WHERE question_id = $1",
+        )
+        .bind(&curr_question.id)
+        .fetch_all(db_pool)
+        .await?;
+    }
+    Ok(questions)
 }
 
 async fn get_chapter_summaries(

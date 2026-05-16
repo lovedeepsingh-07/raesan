@@ -11,11 +11,11 @@
 	const MIN_QUESTIONS = 10;
 	const MAX_CHAPTERS = 10;
 
+	let open_sections: Set<string> = $state(new Set());
+	let creating_test: boolean = $state(false);
+
 	let total_questions: number = $state(10);
 	let selected_chapters: Set<string> = $state(new Set());
-	let open_sections: Set<string> = $state(new Set());
-
-	let creating_test: boolean = $state(false);
 
 	let { data }: PageProps = $props();
 </script>
@@ -87,6 +87,10 @@
 		<Button
 			class="flex gap-[5px] bg-primary text-primary-foreground hover:bg-primary/80"
 			onclick={async () => {
+				if (selected_chapters.size === 0) {
+					alert("You HAVE to select atleast ONE chapter");
+					return;
+				}
 				creating_test = true;
 				const res = await fetch("", {
 					method: "POST",

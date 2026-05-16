@@ -1,4 +1,4 @@
-use crate::examside;
+use crate::{examside, utils};
 
 #[derive(Debug)]
 pub enum QuestionResult {
@@ -62,10 +62,7 @@ pub async fn from_json(
 
     // I cannot host pictures right now, so it would be the best idea to only store
     // non-picture based questions for now, hence we filter all the picture based questions
-    if question_content.contains("https")
-        || question_content.contains("jpg")
-        || question_content.contains("jpeg")
-    {
+    if utils::contains_image(question_content.as_str()) {
         return Err(examside::QuestionResult::Filtered);
     }
 

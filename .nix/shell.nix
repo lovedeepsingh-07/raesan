@@ -13,7 +13,7 @@
       pkgs.lld
       pkgs.clang
       pkgs.sqlitebrowser
-	  pkgs.wrangler
+      pkgs.wrangler
 
       pkgs.pkg-config
       pkgs.sqlite
