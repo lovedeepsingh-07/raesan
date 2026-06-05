@@ -837,7 +837,7 @@ dependencies = [
 
 [[package]]
 name = "error"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "boa_engine",
@@ -2249,7 +2249,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "raesan"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "chrono",
  "env_logger",
@@ -2266,7 +2266,7 @@ dependencies = [
 
 [[package]]
 name = "raesan_web"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "axum",
  "env_logger",
@@ -2669,7 +2669,7 @@ dependencies = [
 
 [[package]]
 name = "schema"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "sqlx",
@@ -3835,7 +3835,7 @@ dependencies = [
 
 [[package]]
 name = "web_scraper"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "ammonia",
  "boa_engine",
