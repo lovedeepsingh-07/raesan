@@ -11,7 +11,7 @@ build_docker:
 
 run_docker:
 	sudo docker run -p 8080:8080 \
-			-e FRONTEND_URL="https://raesan.pages.dev" \
+			-e FRONTEND_URL="https://raesan.enthalapy.com" \
 			-e PUBLIC_APP_ENV="production" \
 			raesan:latest
 
