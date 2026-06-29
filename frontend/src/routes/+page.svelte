@@ -97,8 +97,13 @@
 		<p>
 			Follow me on <a
 				class="text-secondary-foreground underline"
-				href="https://github.com/lovedeepsingh-07">github</a
-			> too if you want.
+				href="https://codeberg.org/lovedeepsingh07">codeberg</a
+			>
+			or
+			<a class="text-secondary-foreground underline" href="https://github.com/lovedeepsingh-07"
+				>github</a
+			>
+			too if you want.
 		</p>
 	</div>
 	<div class="flex flex-col gap-[20px]">
